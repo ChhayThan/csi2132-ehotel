@@ -1,6 +1,5 @@
 import Card from "@mui/material/Card";
 import { Amenity, RoomType, View } from "../types/enums";
-import CardActionArea from "@mui/material/CardActionArea";
 import CardMedia from "@mui/material/CardMedia";
 import CardContent from "@mui/material/CardContent";
 import Chip from "@mui/material/Chip";
