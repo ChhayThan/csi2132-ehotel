@@ -80,7 +80,7 @@ const RegisterCard = () => {
                 required
                 className="border px-3 py-2 rounded-lg border-muted text-sm"
             />
-            <button type="submit" className="bg-gradient-to-r from-primary to-blue-900 text-white py-3 rounded-lg mt-3 text-sm font-semibold cursor-pointer shadow-md"> REGISTER </button>
+            <button type="submit" className="bg-gradient-to-r from-primary to-blue-900 text-white py-3 rounded-lg mt-3 text-sm font-semibold cursor-pointer shadow-md shadow-muted"> REGISTER </button>
         </form>
         <div className="flex flex-col items-center gap-1">
             <p className="text-sm text-black/60">Already have an account? <Link to="/login" className="text-primary font-semibold underline">Login here</Link></p> 
