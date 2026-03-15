@@ -41,8 +41,7 @@ function ComponentPreviewPage() {
               </h1>
             </div>
             <p className="max-w-2xl text-sm leading-6 text-slate-600">
-              Responsive card layouts and room details built to match the current
-              eHotels visual style.
+              Responsive card layouts and room details cards 
             </p>
           </div>
 
