@@ -3,5 +3,9 @@
 @theme {
   --color-primary: #003fb4;
   --color-secondary: #ffb855;
-  --color-muted: --color-black/60;
+  --color-muted: #00000060;
+}
+
+body {
+  font-family: "Sarabun", sans-serif;
 }
