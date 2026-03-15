@@ -2,3 +2,4 @@ export type Amenity = "WiFi" | "AC" | "Heating" | "TV" | "Fridge" | "Closet" | "
 export type View = "City" | "Ocean" | "Mountain";
 export type RoomType = "Single" | "Double" | "Suite";
 export type Role = "Guest" | "User" | "Employee" | "Admin"
+export type Tab = "available_rooms" | "current_bookings" | "archived_bookings"
