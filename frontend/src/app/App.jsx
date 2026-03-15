@@ -1,13 +1,14 @@
-import { useState } from 'react'
+import { Route, Routes } from "react-router-dom";
+import ComponentPreviewPage from "./component_preview_page";
+import Home from "./home";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <p>
-      Welcome to eHotels!
-    </p>
-  )
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/preview/components" element={<ComponentPreviewPage />} />
+    </Routes>
+  );
 }
 
-export default App
+export default App;
