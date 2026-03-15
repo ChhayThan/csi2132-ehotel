@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Role } from "../../types/enums";
 import logoBlue from "../../assets/logo_blue.svg";
+import "../../types/svg.d.ts"
 import AccountCircle from '@mui/icons-material/AccountCircleRounded';
 import CurrencySelector from "./currency_selector.tsx";
 import AccountSec from "./account_sec.tsx";
