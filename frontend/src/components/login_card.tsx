@@ -53,7 +53,7 @@ const LoginCard = ({user_type}: LoginCardProps) => {
         {user_type === "User" && (
           <>
             <p className="text-sm text-black/60">Don't have an account? <Link to="/register" className="text-primary font-semibold underline">Register</Link></p> 
-            <p className="text-sm text-black/60">Are you an employee? <Link to="/employee-login" className="text-primary font-semibold underline">Login here</Link></p> 
+            <p className="text-sm text-black/60">Are you an employee? <Link to="/employee/login" className="text-primary font-semibold underline">Login here</Link></p> 
           </>
         )}
         {user_type === "Employee" && (
