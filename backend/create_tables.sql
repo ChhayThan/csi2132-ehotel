@@ -75,8 +75,8 @@ CREATE TABLE IF NOT EXISTS booking (
     room_number INTEGER PRIMARY KEY,
     customer_id INTEGER PRIMARY KEY,
     creation_date DATE NOT NULL,
-    check_in_date DATE NOT NULL,
-    check_out_date DATE NOT NULL,
+    checkin_date DATE NOT NULL,
+    checkout_date DATE NOT NULL,
     FOREIGN KEY (hid, room_number) REFERENCES room(hid, room_number) ON DELETE RESTRICT,
     FOREIGN KEY (customer_id) REFERENCES customer(id) ON DELETE CASCADE
 );
@@ -86,8 +86,8 @@ CREATE TABLE IF NOT EXISTS renting (
     room_number INTEGER PRIMARY KEY,
     customer_id INTEGER PRIMARY KEY,
     employee_id INTEGER PRIMARY KEY,
-    check_in_date DATE NOT NULL,
-    check_out_date DATE NOT NULL,
+    checkin_date DATE NOT NULL,
+    checkout_date DATE NOT NULL,
     FOREIGN KEY (hid, room_number) REFERENCES room(hid, room_number) ON DELETE RESTRICT,
     FOREIGN KEY (customer_id) REFERENCES customer(id) ON DELETE CASCADE,
     FOREIGN KEY (employee_id) REFERENCES employee(id) ON DELETE RESTRICT
@@ -98,15 +98,15 @@ CREATE TABLE IF NOT EXISTS booking_archive (
     room_number INTEGER PRIMARY KEY,
     customer_id INTEGER PRIMARY KEY,
     creation_date DATE PRIMARY KEY,
-    check_in_date DATE NOT NULL,
-    check_out_date DATE NOT NULL
-)
+    checkin_date DATE NOT NULL,
+    checkout_date DATE NOT NULL
+);
 
 CREATE TABLE IF NOT EXISTS renting_archive (
     hid INTEGER PRIMARY KEY,
     room_number INTEGER PRIMARY KEY,
     customer_id INTEGER PRIMARY KEY,
     employee_id INTEGER PRIMARY KEY,
-    check_in_date DATE PRIMARY KEY,
-    check_out_date DATE NOT NULL
+    checkin_date DATE PRIMARY KEY,
+    checkout_date DATE NOT NULL
 );
