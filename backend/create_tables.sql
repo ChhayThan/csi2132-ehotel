@@ -5,8 +5,9 @@ CREATE TABLE IF NOT EXISTS hotel_chain (
 );
 
 CREATE TABLE IF NOT EXISTS hotel_chain_email (
-    chain_name VARCHAR(255) PRIMARY KEY,
-    email_address VARCHAR(255) PRIMARY KEY,
+    chain_name VARCHAR(255),
+    email_address VARCHAR(255),
+	  PRIMARY KEY (chain_name, email_address),
     FOREIGN KEY (chain_name) REFERENCES hotel_chain(name) ON DELETE CASCADE
 );
 
@@ -17,8 +18,7 @@ CREATE TABLE IF NOT EXISTS employee (
     address TEXT NOT NULL,
     password CHAR(256) NOT NULL,  /* SHA-256 hashed password */
     role VARCHAR(20) NOT NULL,
-    hid INTEGER NOT NULL,
-    FOREIGN KEY (hid) REFERENCES hotel(hid) ON DELETE CASCADE
+    hid INTEGER
 );
 
 CREATE TABLE IF NOT EXISTS hotel (
@@ -36,27 +36,30 @@ CREATE TABLE IF NOT EXISTS hotel (
 );
 
 CREATE TABLE IF NOT EXISTS hotel_email (
-    hid INTEGER PRIMARY KEY,
-    email_address VARCHAR(255) PRIMARY KEY,
+    hid INTEGER,
+    email_address VARCHAR(255),
+    PRIMARY KEY (hid, email_address),
     FOREIGN KEY (hid) REFERENCES hotel(hid) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS room (
-    hid INTEGER PRIMARY KEY,
-    room_number INTEGER PRIMARY KEY,
+    hid INTEGER,
+    room_number INTEGER,
     price DECIMAL(10, 2) NOT NULL,
     capacity INTEGER NOT NULL,
     view VARCHAR(20) NOT NULL,
     extendable BOOLEAN NOT NULL,
     problem TEXT,
     image TEXT,
+    PRIMARY KEY (hid, room_number),
     FOREIGN KEY (hid) REFERENCES hotel(hid) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS room_amenity (
-    hid INTEGER PRIMARY KEY,
-    room_number INTEGER PRIMARY KEY,
-    amenity VARCHAR(20) PRIMARY KEY,
+    hid INTEGER,
+    room_number INTEGER,
+    amenity VARCHAR(20),
+    PRIMARY KEY (hid, room_number, amenity),
     FOREIGN KEY (hid, room_number) REFERENCES room(hid, room_number) ON DELETE CASCADE
 );
 
@@ -66,14 +69,15 @@ CREATE TABLE IF NOT EXISTS customer (
     last_name VARCHAR(255) NOT NULL,
     address TEXT NOT NULL,
     email_address VARCHAR(255) UNIQUE NOT NULL,
-    password CHAR(256) NOT NULL  /* SHA-256 hashed password */
+    password CHAR(256) NOT NULL,  /* SHA-256 hashed password */
     registration_date DATE NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS booking (
-    hid INTEGER PRIMARY KEY,
-    room_number INTEGER PRIMARY KEY,
-    customer_id INTEGER PRIMARY KEY,
+    ref_id SERIAL PRIMARY KEY,
+    hid INTEGER,
+    room_number INTEGER,
+    customer_id INTEGER,
     creation_date DATE NOT NULL,
     checkin_date DATE NOT NULL,
     checkout_date DATE NOT NULL,
@@ -82,10 +86,11 @@ CREATE TABLE IF NOT EXISTS booking (
 );
 
 CREATE TABLE IF NOT EXISTS renting (
-    hid INTEGER PRIMARY KEY,
-    room_number INTEGER PRIMARY KEY,
-    customer_id INTEGER PRIMARY KEY,
-    employee_id INTEGER PRIMARY KEY,
+    ref_id SERIAL PRIMARY KEY,
+    hid INTEGER,
+    room_number INTEGER,
+    customer_id INTEGER,
+    employee_id INTEGER,
     checkin_date DATE NOT NULL,
     checkout_date DATE NOT NULL,
     FOREIGN KEY (hid, room_number) REFERENCES room(hid, room_number) ON DELETE RESTRICT,
@@ -94,19 +99,23 @@ CREATE TABLE IF NOT EXISTS renting (
 );
 
 CREATE TABLE IF NOT EXISTS booking_archive (
-    hid INTEGER PRIMARY KEY,
-    room_number INTEGER PRIMARY KEY,
-    customer_id INTEGER PRIMARY KEY,
-    creation_date DATE PRIMARY KEY,
+    ref_id INTEGER,
+    hid INTEGER,
+    room_number INTEGER,
+    customer_id INTEGER,
+    creation_date DATE NOT NULL,
     checkin_date DATE NOT NULL,
-    checkout_date DATE NOT NULL
+    checkout_date DATE NOT NULL,
+    PRIMARY KEY (ref_id, creation_date)
 );
 
 CREATE TABLE IF NOT EXISTS renting_archive (
-    hid INTEGER PRIMARY KEY,
-    room_number INTEGER PRIMARY KEY,
-    customer_id INTEGER PRIMARY KEY,
-    employee_id INTEGER PRIMARY KEY,
-    checkin_date DATE PRIMARY KEY,
-    checkout_date DATE NOT NULL
+    ref_id INTEGER,
+    hid INTEGER,
+    room_number INTEGER,
+    customer_id INTEGER,
+    employee_id INTEGER,
+    checkin_date DATE NOT NULL,
+    checkout_date DATE NOT NULL,
+    PRIMARY KEY (ref_id, checkin_date)
 );
