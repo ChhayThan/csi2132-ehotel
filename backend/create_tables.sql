@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS room (
     hid INTEGER PRIMARY KEY,
     room_number INTEGER PRIMARY KEY,
     price DECIMAL(10, 2) NOT NULL,
-    room_type VARCHAR(20) NOT NULL,
+    capacity INTEGER NOT NULL,
     view VARCHAR(20) NOT NULL,
     extendable BOOLEAN NOT NULL,
     problem TEXT,
