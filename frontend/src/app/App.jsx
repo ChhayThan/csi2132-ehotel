@@ -1,4 +1,5 @@
 import { Route, Routes } from "react-router-dom";
+import AdminManageDatabasePage from "./admin_manage_database_page";
 import ComponentPreviewPage from "./component_preview_page";
 import ConfirmBookingPage from "./confirm_booking_page";
 import EmployeeDashboardPage from "./employee_dashboard_page";
@@ -9,6 +10,7 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
+      <Route path="/admin/manage-database" element={<AdminManageDatabasePage />} />
       <Route path="/employee/login" element={<EmployeeLoginPage />} />
       <Route path="/employee/dashboard" element={<EmployeeDashboardPage />} />
       <Route path="/preview/components" element={<ComponentPreviewPage />} />
