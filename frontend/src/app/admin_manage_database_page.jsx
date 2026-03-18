@@ -1,7 +1,9 @@
 import { useMemo, useState } from "react";
 import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
 import AddEntity from "../components/add_entity";
+import DeleteEntityModal from "../components/delete_entity_modal";
 import EmployeeCard from "../components/employee_card";
+import EditEntityModal from "../components/edit_entity_modal";
 import HotelChainCard from "../components/hotel_chain_card";
 import HotelCard from "../components/hotel_card";
 import RoomCard from "../components/room_card";
@@ -183,6 +185,8 @@ function AdminManageDatabasePage() {
   const [selectedChainId, setSelectedChainId] = useState(adminData[0].id);
   const [selectedHotelId, setSelectedHotelId] = useState(adminData[0].hotels[0].id);
   const [isAddEntityOpen, setIsAddEntityOpen] = useState(false);
+  const [editEntityTarget, setEditEntityTarget] = useState(null);
+  const [deleteEntityTarget, setDeleteEntityTarget] = useState(null);
 
   const selectedChain = useMemo(
     () => adminData.find((chain) => chain.id === selectedChainId) ?? adminData[0],
@@ -253,6 +257,29 @@ function AdminManageDatabasePage() {
     rooms: "Room",
   }[view];
 
+  const openEditEntity = (target) => {
+    setEditEntityTarget(target);
+  };
+
+  const openDeleteEntity = (target) => {
+    setDeleteEntityTarget(target);
+  };
+
+  const handleMockEdit = (values) => {
+    console.log("Mock edit entity", {
+      entity: editEntityTarget?.entity,
+      target: editEntityTarget?.entityName,
+      values,
+    });
+  };
+
+  const handleMockDelete = () => {
+    console.log("Mock delete entity", {
+      entity: deleteEntityTarget?.entity,
+      target: deleteEntityTarget?.entityName,
+    });
+  };
+
   return (
     <div className="min-h-screen">
       <div className="min-h-[calc(100vh-2rem)] bg-[#f4f7fb] shadow-[0_25px_60px_rgba(0,0,0,0.28)]">
@@ -317,7 +344,25 @@ function AdminManageDatabasePage() {
                         hotels_count={chain.hotels.length}
                         email={chain.email}
                         phone={chain.phone}
+                        onEdit={() =>
+                          openEditEntity({
+                            entity: "HotelChain",
+                            entityName: chain.name,
+                            initialValues: {
+                              name: chain.name,
+                              address: chain.address,
+                              email: chain.email,
+                              phone: chain.phone,
+                            },
+                          })
+                        }
                         onViewHotels={() => openHotels(chain.id)}
+                        onDelete={() =>
+                          openDeleteEntity({
+                            entity: "HotelChain",
+                            entityName: chain.name,
+                          })
+                        }
                       />
                     ))
                   : null}
@@ -335,8 +380,26 @@ function AdminManageDatabasePage() {
                         rooms_count={hotel.rooms.length}
                         email={hotel.email}
                         phone={hotel.phone}
+                        onEdit={() =>
+                          openEditEntity({
+                            entity: "Hotel",
+                            entityName: hotel.name,
+                            initialValues: {
+                              name: hotel.name,
+                              address: hotel.address,
+                              email: hotel.email,
+                              phone: hotel.phone,
+                            },
+                          })
+                        }
                         onViewEmployees={() => openEmployees(hotel.id)}
                         onViewRooms={() => openRooms(hotel.id)}
+                        onDelete={() =>
+                          openDeleteEntity({
+                            entity: "Hotel",
+                            entityName: hotel.name,
+                          })
+                        }
                       />
                     ))
                   : null}
@@ -348,6 +411,25 @@ function AdminManageDatabasePage() {
                         name={employee.name}
                         role={employee.role}
                         employee_id={employee.id}
+                        onEdit={() =>
+                          openEditEntity({
+                            entity: "Employee",
+                            entityName: employee.name,
+                            initialValues: {
+                              firstName: employee.name.split(" ")[0] ?? "",
+                              lastName: employee.name.split(" ").slice(1).join(" "),
+                              address: selectedHotel.address,
+                              password: "password123!",
+                              role: employee.role === "Admin" ? "Admin" : "Employee",
+                            },
+                          })
+                        }
+                        onDelete={() =>
+                          openDeleteEntity({
+                            entity: "Employee",
+                            entityName: employee.name,
+                          })
+                        }
                       />
                     ))
                   : null}
@@ -361,6 +443,27 @@ function AdminManageDatabasePage() {
                         price={room.price}
                         room_type={room.roomType}
                         view={room.view}
+                        onEdit={() =>
+                          openEditEntity({
+                            entity: "Room",
+                            entityName: `Room ${room.roomNumber}`,
+                            initialValues: {
+                              roomNumber: `${room.roomNumber}`,
+                              capacity: room.roomType,
+                              view: room.view.replace(" View", ""),
+                              amenities: room.amenities?.join(", ") ?? "",
+                              problems: room.problems ?? "",
+                              price: `${room.price}`,
+                              extendable: false,
+                            },
+                          })
+                        }
+                        onDelete={() =>
+                          openDeleteEntity({
+                            entity: "Room",
+                            entityName: `Room ${room.roomNumber}`,
+                          })
+                        }
                       />
                     ))
                   : null}
@@ -380,6 +483,31 @@ function AdminManageDatabasePage() {
               setIsActive={setIsAddEntityOpen}
             />
           </div>
+        </div>
+      ) : null}
+
+      {editEntityTarget ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 px-4 py-8 backdrop-blur-[2px]">
+          <div className="max-h-[calc(100vh-3rem)] overflow-y-auto">
+            <EditEntityModal
+              entity={editEntityTarget.entity}
+              entityName={editEntityTarget.entityName}
+              initialValues={editEntityTarget.initialValues}
+              setIsActive={() => setEditEntityTarget(null)}
+              onSave={handleMockEdit}
+            />
+          </div>
+        </div>
+      ) : null}
+
+      {deleteEntityTarget ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 px-4 py-8 backdrop-blur-[2px]">
+          <DeleteEntityModal
+            entity={deleteEntityTarget.entity}
+            entityName={deleteEntityTarget.entityName}
+            setIsActive={() => setDeleteEntityTarget(null)}
+            onDelete={handleMockDelete}
+          />
         </div>
       ) : null}
     </div>
