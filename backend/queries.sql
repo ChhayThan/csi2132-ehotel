@@ -2,7 +2,7 @@
 
 /* available rooms for hotel */
 WITH available_rooms_for_hotel AS (
-  SELECT room_number, capacity, view, price, problem, extendable FROM 
+  SELECT hid, room_number, capacity, view, price, problem, extendable FROM 
   room WHERE hid = $1 AND room_number IN (
     SELECT DISTINCT room_number FROM available_rooms($2, $3) WHERE hid = $1
   )
@@ -67,11 +67,11 @@ SELECT * FROM renting_archive where hid = $1;
 
 /* all hotel chains */
 SELECT * FROM hotel_chain JOIN (
-  SELECT hid, array_agg(email_address) AS email_addresses FROM hotel_chain_email GROUP BY hid
-) USING (hid)
+  SELECT name, array_agg(email_address) AS email_addresses FROM hotel_chain_email GROUP BY name
+) USING (name)
 JOIN (
-  SELECT hid, count(*) AS num_hotels FROM hotel GROUP BY hid
-) USING (hid);
+  SELECT chain_name, count(*) AS num_hotels FROM hotel GROUP BY chain_name
+) ON (name = chain_name);
 
 /* all hotels in chain */
 SELECT * FROM hotel JOIN (
@@ -80,7 +80,7 @@ SELECT * FROM hotel JOIN (
 WHERE chain_name = $1;
 
 /* all employees in hotel */
-SELECT * FROM employee WHERE hid = $1;
+SELECT id, first_name, last_name, role, address FROM employee WHERE hid = $1;
 
 /* all rooms in hotel */
 SELECT * FROM room WHERE hid = $1;

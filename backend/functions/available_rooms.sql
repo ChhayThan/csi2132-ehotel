@@ -1,4 +1,5 @@
-CREATE FUNCTION available_rooms(target_checkin DATE, target_checkout DATE) RETURNS TABLE(hid INTEGER, room_number INTEGER) AS $$
+CREATE FUNCTION available_rooms(target_checkin DATE, target_checkout DATE) RETURNS TABLE(hid INTEGER, room_number INTEGER) AS 
+$$
 BEGIN
     RETURN QUERY
     SELECT hid, room_number from room

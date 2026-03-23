@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS employee (
 
 CREATE TABLE IF NOT EXISTS hotel (
     hid SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
     rating RATING,
     address_country VARCHAR(255) NOT NULL,
     address_city VARCHAR(255) NOT NULL,
@@ -93,6 +94,8 @@ CREATE TABLE IF NOT EXISTS renting (
     employee_id INTEGER,
     checkin_date DATE NOT NULL,
     checkout_date DATE NOT NULL,
+    payment_type VARCHAR(255) NOT NULL,
+    payment_amount PRICE NOT NULL,
     FOREIGN KEY (hid, room_number) REFERENCES room(hid, room_number) ON DELETE RESTRICT,
     FOREIGN KEY (customer_id) REFERENCES customer(id) ON DELETE CASCADE,
     FOREIGN KEY (employee_id) REFERENCES employee(id) ON DELETE RESTRICT
@@ -117,5 +120,7 @@ CREATE TABLE IF NOT EXISTS renting_archive (
     employee_id INTEGER,
     checkin_date DATE NOT NULL,
     checkout_date DATE NOT NULL,
+    payment_type VARCHAR(255) NOT NULL,
+    payment_amount PRICE NOT NULL,
     PRIMARY KEY (ref_id, checkin_date)
 );
