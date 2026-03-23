@@ -19,7 +19,7 @@ const Navbar = ({ user_type, user_name, currency, setCurrency }: NavbarProps) =>
         // SIGN OUT LOGIC
     }
     
-    return <nav className="fixed top-0 left-0 w-full flex justify-between items-center px-6 py-5 bg-white text-black shadow-sm">
+    return <nav className="fixed top-0 left-0 z-50 w-full flex justify-between items-center px-6 py-5 bg-white text-black shadow-sm">
         {/* logo */}
         <Link to="/">
             <img src={logoBlue} className="h-6" alt="eHotel logo"/>
@@ -48,7 +48,7 @@ const Navbar = ({ user_type, user_name, currency, setCurrency }: NavbarProps) =>
             )}
             {user_type === "Admin" && (
                 <>
-                    <Link to="/employee/manage">Manage Database</Link>
+                    <Link to="/admin/manage-database">Manage Database</Link>
                     <AccountSec user_name={user_name} handleSignOut={handleSignOut} />
                 </>
             )}

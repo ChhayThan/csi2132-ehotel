@@ -14,6 +14,8 @@ type AddEntityProps = {
 }
 
 const AddEntity = ({entity, curChainName, curHotelName, setIsActive}: AddEntityProps) => {
+    const inputClass = "w-full rounded-2xl border border-black/30 px-5 py-4 text-sm outline-none";
+    const iconWrapClass = "flex items-center rounded-2xl border border-black/30 text-sm";
 
     // hotelchain, hotel states 
     const [chainName, setChainName] = useState("");
@@ -59,37 +61,37 @@ const AddEntity = ({entity, curChainName, curHotelName, setIsActive}: AddEntityP
                         value={chainName}
                         onChange={(e) => setChainName(e.target.value)}
                         required
-                        className="border px-3 py-2 rounded-lg border-muted text-sm"
+                        className={inputClass}
                     />
-                    <div className="flex items-center border rounded-lg border-muted text-sm">
-                        <ApartmentRoundedIcon className="text-muted text-[18px] ml-3"/>
+                    <div className={iconWrapClass}>
+                        <ApartmentRoundedIcon className="ml-4 text-[1.35rem] text-black/55"/>
                         <input 
                             placeholder="Central Office Address"
                             value={address}
                             onChange={(e) => setAddress(e.target.value)}
                             required
-                            className="w-full px-2 py-2"
+                            className="w-full px-3 py-4 outline-none"
                         />
                     </div>
-                    <div className="flex items-center border rounded-lg border-muted text-sm">
-                        <EmailRoundedIcon className="text-muted text-[18px] ml-3"/>
+                    <div className={iconWrapClass}>
+                        <EmailRoundedIcon className="ml-4 text-[1.35rem] text-black/55"/>
                         <input 
                             type="email"
                             placeholder="Central Office Email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
-                            className="w-full px-2 py-2"
+                            className="w-full px-3 py-4 outline-none"
                         />
                     </div>
-                    <div className="flex items-center border rounded-lg border-muted text-sm">
-                        <CallRoundedIcon className="text-muted text-[18px] ml-3"/>
+                    <div className={iconWrapClass}>
+                        <CallRoundedIcon className="ml-4 text-[1.35rem] text-black/55"/>
                         <input 
                             placeholder="Central Office Phone Number"
                             value={phoneNumber}
                             onChange={(e) => setPhoneNumber(e.target.value)}
                             required
-                            className="w-full px-2 py-2"
+                            className="w-full px-3 py-4 outline-none"
                         />
                     </div>
                 </>
@@ -100,37 +102,37 @@ const AddEntity = ({entity, curChainName, curHotelName, setIsActive}: AddEntityP
                         value={hotelName}
                         onChange={(e) => setHotelName(e.target.value)}
                         required
-                        className="border px-3 py-2 rounded-lg border-muted text-sm"
+                        className={inputClass}
                     />
-                    <div className="flex items-center border rounded-lg border-muted text-sm">
-                        <ApartmentRoundedIcon className="text-muted text-[18px] ml-3"/>
+                    <div className={iconWrapClass}>
+                        <ApartmentRoundedIcon className="ml-4 text-[1.35rem] text-black/55"/>
                         <input 
                             placeholder="Hotel Address"
                             value={address}
                             onChange={(e) => setAddress(e.target.value)}
                             required
-                            className="w-full px-2 py-2"
+                            className="w-full px-3 py-4 outline-none"
                         />
                     </div>
-                    <div className="flex items-center border rounded-lg border-muted text-sm">
-                        <EmailRoundedIcon className="text-muted text-[18px] ml-3"/>
+                    <div className={iconWrapClass}>
+                        <EmailRoundedIcon className="ml-4 text-[1.35rem] text-black/55"/>
                         <input 
                             type="email"
                             placeholder="Hotel Email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
-                            className="w-full px-2 py-2"
+                            className="w-full px-3 py-4 outline-none"
                         />
                     </div>
-                    <div className="flex items-center border rounded-lg border-muted text-sm">
-                        <CallRoundedIcon className="text-muted text-[18px] ml-3 "/>
+                    <div className={iconWrapClass}>
+                        <CallRoundedIcon className="ml-4 text-[1.35rem] text-black/55"/>
                         <input 
                             placeholder="Hotel Phone Number"
                             value={phoneNumber}
                             onChange={(e) => setPhoneNumber(e.target.value)}
                             required
-                            className="w-full px-2 py-2"
+                            className="w-full px-3 py-4 outline-none"
                         />
                     </div>
                 </>
@@ -142,13 +144,13 @@ const AddEntity = ({entity, curChainName, curHotelName, setIsActive}: AddEntityP
                         onChange={(e) => setRoomNum(e.target.value)}
                         pattern="^\d*$"
                         required
-                        className="border px-3 py-2 rounded-lg border-muted text-sm"
+                        className={inputClass}
                     />
                     <select
                         value={capacity}
                         required
                         onChange={(e) => setCapacity(e.target.value)}
-                        className={`border px-3 py-2 rounded-lg border-muted text-sm ${!capacity ? "text-[#999]" : ""}`}
+                        className={`${inputClass} appearance-none bg-white ${!capacity ? "text-black/45" : ""}`}
                     >
                         <option value="" className="text-muted py-2" disabled>
                             Capacity
@@ -161,7 +163,7 @@ const AddEntity = ({entity, curChainName, curHotelName, setIsActive}: AddEntityP
                         value={view}
                         required
                         onChange={(e) => setView(e.target.value)}
-                        className={`border px-3 py-2 rounded-lg border-muted text-sm ${!view ? "text-[#999]" : ""}`}
+                        className={`${inputClass} appearance-none bg-white ${!view ? "text-black/45" : ""}`}
                     >
                         <option value="" className="text-muted py-2" disabled>
                             View
@@ -176,26 +178,26 @@ const AddEntity = ({entity, curChainName, curHotelName, setIsActive}: AddEntityP
                         value={amenities}
                         onChange={(e) => setAmenities(e.target.value)}
                         required
-                        className="border px-3 py-2 rounded-lg border-muted text-sm resize-none"
+                        className={`${inputClass} min-h-28 resize-none`}
                     />
                     <textarea 
                         placeholder="Room Problems (optional)"
                         value={problems}
                         onChange={(e) => setProblems(e.target.value)}
-                        className="border px-3 py-2 rounded-lg border-muted text-sm resize-none"
+                        className={`${inputClass} min-h-24 resize-none`}
                     />
-                    <div className="flex justify-between items-center px-3 border rounded-lg border-muted text-sm">
+                    <div className="flex items-center justify-between rounded-2xl border border-black/30 px-5 py-4 text-sm">
                         <div className="flex items-center">
-                            <p>$</p>
+                            <p className="font-semibold">$</p>
                             <input 
                                 placeholder="(amount)"
                                 value={price}
                                 onChange={(e) => setPrice(e.target.value)}
                                 required
-                                className="w-full px-2 py-2"
+                                className="w-full px-2 outline-none"
                             />
                         </div>
-                        <p>per night</p>
+                        <p className="font-semibold">per night</p>
                     </div>
                 </>
             default:
@@ -206,24 +208,24 @@ const AddEntity = ({entity, curChainName, curHotelName, setIsActive}: AddEntityP
                             value={firstName}
                             onChange={(e) => setFirstName(e.target.value)}
                             required
-                            className="border px-3 py-2 rounded-l-lg border-muted text-sm w-[50%]"
+                            className="w-[50%] rounded-l-2xl border border-black/30 px-5 py-4 text-sm outline-none"
                         />
                         <input 
                             placeholder="Last name"
                             value={lastName}
                             onChange={(e) => setLastName(e.target.value)}
                             required
-                            className="border px-3 py-2 rounded-r-lg border-muted border-l-0 text-sm w-[50%]"
+                            className="w-[50%] rounded-r-2xl border border-l-0 border-black/30 px-5 py-4 text-sm outline-none"
                         />
                     </div>
-                    <div className="flex items-center border rounded-lg border-muted text-sm">
-                        <LocationOnOutlinedIcon className="text-muted ml-3 text-[18px]"/>
+                    <div className={iconWrapClass}>
+                        <LocationOnOutlinedIcon className="ml-4 text-[1.35rem] text-black/55"/>
                         <input 
                             placeholder="Home Address"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
-                            className="w-full px-2 py-2"
+                            className="w-full px-3 py-4 outline-none"
                         />
                     </div>
                     <input 
@@ -233,7 +235,7 @@ const AddEntity = ({entity, curChainName, curHotelName, setIsActive}: AddEntityP
                         onChange={(e) => setPassword(e.target.value)}
                         pattern="^(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{10,}$"
                         required
-                        className="border px-3 py-2 rounded-lg border-muted text-sm"
+                        className={inputClass}
                     />
                     <div className="text-xs mb-2">
                         <p>Requires:</p>
@@ -250,13 +252,13 @@ const AddEntity = ({entity, curChainName, curHotelName, setIsActive}: AddEntityP
                         pattern="^[A-Z]\d{4}-\d{5}-\d{5}$"
                         title="Example: A0011-22334-55667"
                         required
-                        className="border px-3 py-2 rounded-lg border-muted text-sm"
+                        className={inputClass}
                     />
                     <select
                         value={role}
                         required
                         onChange={(e) => setRole(e.target.value)}
-                        className={`border px-3 py-2 rounded-lg border-muted text-sm ${!role ? "text-[#999]" : ""}`}
+                        className={`${inputClass} appearance-none bg-white ${!role ? "text-black/45" : ""}`}
                     >
                         <option value="" className="text-muted py-2" disabled>
                             Select a Role
@@ -269,16 +271,18 @@ const AddEntity = ({entity, curChainName, curHotelName, setIsActive}: AddEntityP
     }
 
     const handleAddEntity = (e: React.FormEvent) => {
+        e.preventDefault();
         //add whatever entity logic
+        setIsActive(false);
     }
 
-    return <div className="bg-white flex flex-col gap-4 max-w-120 p-9 rounded-xl shadow-xl">
-        <h2 className="text-lg">{headerText()}</h2>
-        <form onSubmit={handleAddEntity} className="flex flex-col gap-2 mt-2">
+    return <div className="bg-white flex w-full max-w-[52rem] flex-col gap-6 rounded-[2rem] p-8 shadow-[0_8px_25px_rgba(0,0,0,0.28)] sm:p-10">
+        <h2 className="text-3xl text-slate-950">{headerText()}</h2>
+        <form onSubmit={handleAddEntity} className="flex flex-col gap-4">
             {formContent()}
-            <div className="flex justify-center gap-4 items-center">
-                <button onClick={() => setIsActive(false)} className="flex-1 bg-black/70 text-white px-5 py-3 rounded-lg mt-3 text-sm font-semibold cursor-pointer shadow-md shadow-muted"> CANCEL </button>
-                <button type="submit" className="flex-1 bg-gradient-to-r from-primary to-blue-900 text-white px-5 py-3 rounded-lg mt-3 text-sm font-semibold cursor-pointer shadow-md shadow-muted"> ADD </button>
+            <div className="mt-4 flex flex-col justify-center gap-4 sm:flex-row">
+                <button type="button" onClick={() => setIsActive(false)} className="cursor-pointer rounded-2xl bg-black/65 px-10 py-4 text-lg font-semibold text-white shadow-[0_6px_14px_rgba(0,0,0,0.18)]"> CANCEL </button>
+                <button type="submit" className="cursor-pointer rounded-2xl bg-gradient-to-r from-primary to-blue-900 px-10 py-4 text-lg font-semibold text-white shadow-[0_6px_14px_rgba(0,0,0,0.18)]"> ADD </button>
             </div>
         </form>
         

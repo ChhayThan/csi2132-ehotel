@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Route, Routes } from "react-router-dom";
+import AdminManageDatabasePage from "./admin_manage_database_page";
 import ComponentPreviewPage from "./component_preview_page";
 import ConfirmBookingPage from "./confirm_booking_page";
 import EmployeeDashboardPage from "./employee_dashboard_page";
