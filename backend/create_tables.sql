@@ -5,10 +5,10 @@ CREATE TABLE IF NOT EXISTS hotel_chain (
 );
 
 CREATE TABLE IF NOT EXISTS hotel_chain_email (
-    chain_name VARCHAR(255),
+    name VARCHAR(255),
     email_address EMAIL,
-	PRIMARY KEY (chain_name, email_address),
-    FOREIGN KEY (chain_name) REFERENCES hotel_chain(name) ON DELETE CASCADE
+	PRIMARY KEY (name, email_address),
+    FOREIGN KEY (name) REFERENCES hotel_chain(name) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS employee (

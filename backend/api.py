@@ -1,6 +1,7 @@
 # api to query the database server
 
 from datetime import date
+import pandas as pd
 from typing_extensions import Literal
 
 from fastapi import FastAPI
@@ -12,17 +13,24 @@ from data_models import Booking, Employee, Hotel, HotelChain, Renting, Room
 app = FastAPI()
 
 
-def query_db(query: str, params: tuple = (), user: str = "public", password: str = ""):
+def query_db_from_sql_file(file_path: str, params: tuple | dict = (), user: str = "public", password: str = "", host="localhost", port=5432):
+    with open(file_path, "r") as f:
+        query = f.read()
+
+    return query_db(query, params, user, password, host, port)
+
+
+def query_db(query: str, params: tuple | dict = (), user: str = "public", password: str = "", host="localhost", port=5432):
     with connect(
-        dbname="ehotel",
+        dbname="ehoteldb",
         user=user,
         password=password,
-        host="localhost",
-        port=5432
+        host=host,
+        port=port
     ) as conn:
-        with conn.cursor() as cur:
-            cur.execute(query, params)
-            return cur.fetchall()
+        df = pd.read_sql_query(query, conn, params=params)
+
+    return df.to_dict(orient="records")
 
 
 ## Public APIs - no authentication
