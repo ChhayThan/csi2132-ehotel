@@ -48,7 +48,7 @@ const Navbar = ({ user_type, user_name, currency, setCurrency }: NavbarProps) =>
             )}
             {user_type === "Admin" && (
                 <>
-                    <Link to="/employee/manage">Manage Database</Link>
+                    <Link to="/admin/manage-database">Manage Database</Link>
                     <AccountSec user_name={user_name} handleSignOut={handleSignOut} />
                 </>
             )}
