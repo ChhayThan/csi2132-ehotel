@@ -1,7 +1,9 @@
 # api to query the database server
 
+import csv
 import os
 from datetime import date
+from io import StringIO
 from pathlib import Path
 from typing import Any, Optional, Union
 import pandas as pd
@@ -66,6 +68,24 @@ def build_token_response(actor_id: str, actor_type: str, role: str, email: Optio
     )
 
 
+def parse_pg_array(value: Any) -> list[str]:
+    if value is None:
+        return []
+    if isinstance(value, list):
+        return [str(item) for item in value]
+    if not isinstance(value, str):
+        return [str(value)]
+    if not (value.startswith("{") and value.endswith("}")):
+        return [value]
+
+    inner = value[1:-1]
+    if inner == "":
+        return []
+
+    # PostgreSQL array strings use CSV-style escaping for quoted elements.
+    return next(csv.reader(StringIO(inner), delimiter=",", quotechar='"', escapechar="\\"))
+
+
 ## Public APIs - no authentication
 
 @app.get("/hotels/available")
@@ -118,6 +138,7 @@ def get_hotel_details(hotel_id: int) -> Hotel:
         street_address=row.pop("street_address"),
         country=row.pop("country")
     )
+    row["email_addresses"] = parse_pg_array(row.pop("email_address", None))
 
     return Hotel(**row)
 
@@ -128,6 +149,9 @@ def get_available_rooms(hotel_id: int, checkin_date: date, checkout_date: date) 
         "queries/available_rooms_for_hotel.sql",
         {"hid": hotel_id, "checkin_date": checkin_date, "checkout_date": checkout_date}
     )
+
+    for row in res:
+        row["amenities"] = parse_pg_array(row.get("amenities"))
 
     return [Room(**row) for row in res]
 
@@ -141,6 +165,8 @@ def get_room_details(hotel_id: int, room_number: int) -> Room:
 
     if len(res) == 0:
         raise HTTPException(status_code=404, detail="Room not found")
+
+    res[0]["amenities"] = parse_pg_array(res[0].get("amenities"))
 
     return Room(**res[0])
 
@@ -342,6 +368,9 @@ def get_hotel_chains(current_user: AuthenticatedUser = Depends(require_admin)) -
         "queries/all_hotel_chains.sql",
     )
 
+    for row in res:
+        row["email_addresses"] = parse_pg_array(row.get("email_addresses"))
+
     return [HotelChain(**row) for row in res]
 
 
@@ -373,6 +402,7 @@ def get_hotels_in_chain(chain_name: str, current_user: AuthenticatedUser = Depen
             street_address=row.pop("street_address"),
             country=row.pop("country")
         )
+        row["email_addresses"] = parse_pg_array(row.get("email_addresses"))
 
     return [Hotel(**row) for row in res]
 
@@ -398,6 +428,9 @@ def get_rooms_in_hotel(hotel_id: int, current_user: AuthenticatedUser = Depends(
         "queries/all_rooms_for_hotel.sql",
         {"hid": hotel_id},
     )
+
+    for row in res:
+        row["amenities"] = parse_pg_array(row.get("amenities"))
 
     return [Room(**row) for row in res]
 
