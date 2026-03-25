@@ -142,7 +142,7 @@ def get_hotel_details(hotel_id: int) -> Hotel:
         street_address=row.pop("address_street_address"),
         country=row.pop("address_country")
     )
-    row["email_addresses"] = parse_pg_array(row.pop("email_address", None))
+    row["email_addresses"] = parse_pg_array(row.pop("email_addresses", None))
 
     return Hotel(**row)
 
