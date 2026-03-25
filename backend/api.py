@@ -10,17 +10,20 @@ from psycopg2 import connect
 from data_models import Address, Booking, Employee, Hotel, HotelChain, Renting, Room
 
 
+_DB_HOST = "localhost"
+
+
 app = FastAPI()
 
 
-def query_db_from_sql_file(file_path: str, params: tuple | dict = (), user: str = "public", password: str = "", host="localhost", port=5432):
+def query_db_from_sql_file(file_path: str, params: tuple | dict = (), user: str = "public", password: str = "", host=_DB_HOST, port=5432):
     with open(file_path, "r") as f:
         query = f.read()
 
     return query_db(query, params, user, password, host, port)
 
 
-def query_db(query: str, params: tuple | dict = (), user: str = "public", password: str = "", host="localhost", port=5432):
+def query_db(query: str, params: tuple | dict = (), user: str = "public", password: str = "", host=_DB_HOST, port=5432):
     with connect(
         dbname="ehoteldb",
         user=user,
@@ -38,6 +41,11 @@ def user_from_token(token: str) -> int:
     pass
 
 
+def _array_str_to_list(array_str: str) -> list[str]:
+    """Converts a string representation of an array (e.g. "{a,b,c}") to a list (e.g. ["a", "b", "c"])"""
+    return array_str[1:-1].split(",") if array_str else None
+
+
 ## Public APIs - no authentication
 
 @app.get("/hotels/available")
@@ -49,9 +57,9 @@ def get_hotels(city: str = None, country: str = None, checkin_date: date = None,
 
     for row in res:
         row["address"] = Address(
-            city=row.pop("city"),
-            street_address=row.pop("street_address"),
-            country=row.pop("country")
+            city=row.pop("address_city"),
+            street_address=row.pop("address_street_address"),
+            country=row.pop("address_country")
         )
 
     return [Hotel(**row) for row in res]
@@ -66,9 +74,9 @@ def get_top_hotels(limit: int = 10) -> list[Hotel]:
 
     for row in res:
         row["address"] = Address(
-            city=row.pop("city"),
-            street_address=row.pop("street_address"),
-            country=row.pop("country")
+            city=row.pop("address_city"),
+            street_address=row.pop("address_street_address"),
+            country=row.pop("address_country")
         )
 
     return [Hotel(**row) for row in res]
@@ -86,10 +94,12 @@ def get_hotel_details(hotel_id: int) -> Hotel:
 
     row = res[0]
     row["address"] = Address(
-        city=row.pop("city"),
-        street_address=row.pop("street_address"),
-        country=row.pop("country")
+        city=row.pop("address_city"),
+        street_address=row.pop("address_street_address"),
+        country=row.pop("address_country")
     )
+
+    row["email_addresses"] = _array_str_to_list(row.pop("email_addresses"))
 
     return Hotel(**row)
 
@@ -100,6 +110,9 @@ def get_available_rooms(hotel_id: int, checkin_date: date, checkout_date: date) 
         "queries/available_rooms_for_hotel.sql",
         {"hid": hotel_id, "checkin_date": checkin_date, "checkout_date": checkout_date}
     )
+
+    for row in res:
+        row["amenities"] = _array_str_to_list(row.pop("amenities"))
 
     return [Room(**row) for row in res]
 
@@ -113,6 +126,8 @@ def get_room_details(hotel_id: int, room_number: int) -> Room:
 
     if len(res) == 0:
         raise HTTPException(status_code=404, detail="Room not found")
+    
+    res[0]["amenities"] = _array_str_to_list(res[0].pop("amenities"))
 
     return Room(**res[0])
 
@@ -250,9 +265,9 @@ def get_hotels_in_chain(chain_name: str, token: str) -> list[Hotel]:
 
     for row in res:
         row["address"] = Address(
-            city=row.pop("city"),
-            street_address=row.pop("street_address"),
-            country=row.pop("country")
+            city=row.pop("address_city"),
+            street_address=row.pop("address_street_address"),
+            country=row.pop("address_country")
         )
 
     return [Hotel(**row) for row in res]

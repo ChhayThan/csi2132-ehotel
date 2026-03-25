@@ -15,12 +15,12 @@ class Hotel(BaseModel):
     name: str
     rating: int
     address: Address
-    image: str
+    image: str | None = None
     chain_name: str
-    min_price: float
-    num_available_rooms: int
+    min_price: float | None = None
+    num_available_rooms: int | None = None
     phone_number: str
-    email_addresses: list[str]
+    email_addresses: list[str] | None = None
 
 
 class Room(BaseModel):
@@ -31,7 +31,8 @@ class Room(BaseModel):
     price: float
     problem: str
     extendable: bool
-    amenities: list[str]
+    amenities: list[str] | None = None
+    image: str | None = None
 
 
 class Booking(BaseModel):
@@ -53,13 +54,15 @@ class Renting(BaseModel):
     creation_date: date
     checkin_date: date
     checkout_date: date
+    payment_type: str
+    payment_amount: float
 
 
 class HotelChain(BaseModel):
     name: str
     address: str
     phone_number: str
-    email_addresses: list[str]
+    email_addresses: list[str] | None = None
     num_hotels: int
 
 
