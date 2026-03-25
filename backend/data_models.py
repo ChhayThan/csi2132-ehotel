@@ -39,7 +39,7 @@ class Booking(BaseModel):
     ref_id: int
     hid: int
     room_number: int
-    customer_id: int
+    customer_id: str
     creation_date: date
     checkin_date: date
     checkout_date: date
@@ -49,7 +49,7 @@ class Renting(BaseModel):
     ref_id: int
     hid: int
     room_number: int
-    customer_id: int
+    customer_id: str
     employee_id: int
     creation_date: date
     checkin_date: date

@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS employee (
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
     address TEXT NOT NULL,
-    password CHAR(256) NOT NULL,  -- SHA-256 hashed password
+    password_hash TEXT NOT NULL,
     role EMPLOYEE_ROLE NOT NULL,
     hid INTEGER
 );
@@ -65,12 +65,12 @@ CREATE TABLE IF NOT EXISTS room_amenity (
 );
 
 CREATE TABLE IF NOT EXISTS customer (
-    id VARCHAR(50) PRIMARY KEY,  -- driver's license number
+    id VARCHAR(64) PRIMARY KEY,
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
     address TEXT NOT NULL,
     email_address EMAIL UNIQUE NOT NULL,
-    password CHAR(256) NOT NULL,  -- SHA-256 hashed password
+    password_hash TEXT NOT NULL,
     registration_date DATE NOT NULL
 );
 
@@ -78,7 +78,7 @@ CREATE TABLE IF NOT EXISTS booking (
     ref_id SERIAL PRIMARY KEY,
     hid INTEGER,
     room_number POSITIVE_INTEGER,
-    customer_id INTEGER,
+    customer_id VARCHAR(64),
     creation_date DATE NOT NULL,
     checkin_date DATE NOT NULL,
     checkout_date DATE NOT NULL,
@@ -90,8 +90,9 @@ CREATE TABLE IF NOT EXISTS renting (
     ref_id SERIAL PRIMARY KEY,
     hid INTEGER,
     room_number POSITIVE_INTEGER,
-    customer_id INTEGER,
+    customer_id VARCHAR(64),
     employee_id INTEGER,
+    creation_date DATE NOT NULL,
     checkin_date DATE NOT NULL,
     checkout_date DATE NOT NULL,
     payment_type VARCHAR(255) NOT NULL,
@@ -105,7 +106,7 @@ CREATE TABLE IF NOT EXISTS booking_archive (
     ref_id INTEGER,
     hid INTEGER,
     room_number POSITIVE_INTEGER,
-    customer_id INTEGER,
+    customer_id VARCHAR(64),
     creation_date DATE NOT NULL,
     checkin_date DATE NOT NULL,
     checkout_date DATE NOT NULL,
@@ -116,7 +117,7 @@ CREATE TABLE IF NOT EXISTS renting_archive (
     ref_id INTEGER,
     hid INTEGER,
     room_number POSITIVE_INTEGER,
-    customer_id INTEGER,
+    customer_id VARCHAR(64),
     employee_id INTEGER,
     checkin_date DATE NOT NULL,
     checkout_date DATE NOT NULL,
