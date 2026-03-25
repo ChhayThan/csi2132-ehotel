@@ -14,6 +14,13 @@ Password hashing:
 - bcrypt passwords are limited to 72 bytes, so auth request validation enforces a max password length of 72 characters
 - mock seed hashes are stored in standard `$2b$...` bcrypt format
 
+Auth endpoints:
+
+- `POST /auth/register` for customer registration
+- `POST /auth/login` for customer login
+- `POST /employee/login` for employee login
+- `GET /auth/me` returns the current customer or employee profile based on the bearer token
+
 Database:
 
 - `DATABASE_URL`

@@ -3,15 +3,15 @@
 import os
 from datetime import date
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional, Union
 import pandas as pd
 from typing_extensions import Literal
 
 from fastapi import Depends, FastAPI, HTTPException, status
 from psycopg2 import connect
 
-from auth import create_access_token, hash_password, require_admin, require_customer, require_employee, verify_password
-from auth_models import AuthenticatedUser, CurrentCustomerResponse, CustomerLoginRequest, CustomerRegisterRequest, TokenResponse, TokenUser
+from auth import create_access_token, get_current_user, hash_password, require_admin, require_customer, require_employee, verify_password
+from auth_models import AuthenticatedUser, CurrentCustomerResponse, CurrentEmployeeResponse, CustomerLoginRequest, CustomerRegisterRequest, EmployeeLoginRequest, TokenResponse, TokenUser
 from data_models import Address, Booking, Employee, Hotel, HotelChain, Renting, Room
 
 
@@ -52,16 +52,16 @@ def query_db(query: str, params: Any = (), user: str = "public", password: str =
     return df.to_dict(orient="records")
 
 
-def build_token_response(customer: dict) -> TokenResponse:
-    # Registration and login both return the same bearer-token payload shape.
-    token = create_access_token(actor_id=customer["id"], actor_type="customer", role="customer")
+def build_token_response(actor_id: str, actor_type: str, role: str, email: Optional[str] = None) -> TokenResponse:
+    # Customer and employee login return the same bearer-token payload shape.
+    token = create_access_token(actor_id=actor_id, actor_type=actor_type, role=role)
     return TokenResponse(
         access_token=token,
         user=TokenUser(
-            id=customer["id"],
-            actor_type="customer",
-            role="customer",
-            email=customer["email_address"],
+            id=actor_id,
+            actor_type=actor_type,
+            role=role,
+            email=email,
         ),
     )
 
@@ -159,7 +159,12 @@ def login(payload: CustomerLoginRequest) -> TokenResponse:
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    return build_token_response(customer[0])
+    return build_token_response(
+        actor_id=customer[0]["id"],
+        actor_type="customer",
+        role="customer",
+        email=customer[0]["email_address"],
+    )
 
 
 @app.post("/auth/register", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)
@@ -187,31 +192,66 @@ def register(payload: CustomerRegisterRequest) -> TokenResponse:
         },
     )
 
-    return build_token_response(customer[0])
-
-
-@app.get("/auth/me", response_model=CurrentCustomerResponse)
-def get_current_customer(current_user: AuthenticatedUser = Depends(require_customer)) -> CurrentCustomerResponse:
-    # The bearer token gives us identity; this query hydrates the frontend-facing user profile.
-    customer = query_db_from_sql_file(
-        "queries/auth/get_customer_by_id.sql",
-        {"customer_id": current_user.actor_id},
-    )
-    if len(customer) == 0:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Could not validate credentials",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-
-    row = customer[0]
-    return CurrentCustomerResponse(
-        id=row["id"],
+    return build_token_response(
+        actor_id=customer[0]["id"],
         actor_type="customer",
         role="customer",
-        email=row["email_address"],
-        first_name=row["first_name"],
-        last_name=row["last_name"],
+        email=customer[0]["email_address"],
+    )
+
+
+@app.get("/auth/me", response_model=Union[CurrentCustomerResponse, CurrentEmployeeResponse])
+def get_current_actor(current_user: AuthenticatedUser = Depends(get_current_user)) -> Union[CurrentCustomerResponse, CurrentEmployeeResponse]:
+    # Hydrate the authenticated principal into the correct frontend-facing actor shape.
+    if current_user.actor_type == "customer":
+        customer = query_db_from_sql_file(
+            "queries/auth/get_customer_by_id.sql",
+            {"customer_id": current_user.actor_id},
+        )
+        if len(customer) == 0:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Could not validate credentials",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+
+        row = customer[0]
+        return CurrentCustomerResponse(
+            id=row["id"],
+            actor_type="customer",
+            role="customer",
+            email=row["email_address"],
+            first_name=row["first_name"],
+            last_name=row["last_name"],
+        )
+
+    if current_user.actor_type == "employee":
+        employee = query_db_from_sql_file(
+            "queries/auth/get_employee_by_id.sql",
+            {"employee_id": int(current_user.actor_id)},
+        )
+        if len(employee) == 0:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Could not validate credentials",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+
+        row = employee[0]
+        return CurrentEmployeeResponse(
+            id=row["id"],
+            actor_type="employee",
+            role=row["role"],
+            first_name=row["first_name"],
+            last_name=row["last_name"],
+            address=row["address"],
+            hid=row["hid"],
+        )
+
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
     )
 
 
@@ -275,10 +315,24 @@ def get_hotel_rentings(hotel_id: int, archived: bool, current_user: Authenticate
     return [Renting(**row) for row in res]
 
 
-@app.post("/employee/login")
-def employee_login(employee_id: int, password: str) -> str:
-    """Returns token"""
-    pass
+@app.post("/employee/login", response_model=TokenResponse)
+def employee_login(payload: EmployeeLoginRequest) -> TokenResponse:
+    employee = query_db_from_sql_file(
+        "queries/auth/get_employee_for_login.sql",
+        {"employee_id": payload.employee_id},
+    )
+    if len(employee) == 0 or not verify_password(payload.password, employee[0]["password_hash"]):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid employee ID or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    return build_token_response(
+        actor_id=str(employee[0]["id"]),
+        actor_type="employee",
+        role=employee[0]["role"],
+    )
 
 
 ## Admin APIs - require authentication

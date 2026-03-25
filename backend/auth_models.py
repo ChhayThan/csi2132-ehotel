@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel, EmailStr, Field
 
 
@@ -12,6 +14,11 @@ class CustomerRegisterRequest(BaseModel):
 
 class CustomerLoginRequest(BaseModel):
     email: EmailStr
+    password: str = Field(min_length=8, max_length=72)
+
+
+class EmployeeLoginRequest(BaseModel):
+    employee_id: int
     password: str = Field(min_length=8, max_length=72)
 
 
@@ -31,11 +38,21 @@ class CurrentCustomerResponse(BaseModel):
     last_name: str
 
 
+class CurrentEmployeeResponse(BaseModel):
+    id: int
+    actor_type: str
+    role: str
+    first_name: str
+    last_name: str
+    address: str
+    hid: int
+
+
 class TokenUser(BaseModel):
     id: str
     actor_type: str
     role: str
-    email: EmailStr
+    email: Optional[EmailStr] = None
 
 
 class TokenResponse(BaseModel):
