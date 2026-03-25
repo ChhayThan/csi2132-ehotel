@@ -24,8 +24,8 @@ CREATE TABLE IF NOT EXISTS employee (
 CREATE TABLE IF NOT EXISTS hotel (
     hid SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    rating RATING,
-    address_country VARCHAR(255) NOT NULL,
+    rating RATING NOT NULL,
+    address_country CHAR(2) NOT NULL,  -- Alpha-2 country code
     address_city VARCHAR(255) NOT NULL,
     address_street_address VARCHAR(255) NOT NULL,
     phone_number PHONE_NUMBER NOT NULL,

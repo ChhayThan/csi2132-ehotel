@@ -17,6 +17,9 @@ from auth_models import AuthenticatedUser, CurrentCustomerResponse, CurrentEmplo
 from data_models import Address, Booking, Employee, Hotel, HotelChain, Renting, Room
 
 
+_DB_HOST = "localhost"
+
+
 app = FastAPI()
 BASE_DIR = Path(__file__).resolve().parent
 DATABASE_URL = os.getenv("DATABASE_URL")
@@ -86,6 +89,7 @@ def parse_pg_array(value: Any) -> list[str]:
     return next(csv.reader(StringIO(inner), delimiter=",", quotechar='"', escapechar="\\"))
 
 
+
 ## Public APIs - no authentication
 
 @app.get("/hotels/available")
@@ -97,9 +101,9 @@ def get_hotels(city: str = None, country: str = None, checkin_date: date = None,
 
     for row in res:
         row["address"] = Address(
-            city=row.pop("city"),
-            street_address=row.pop("street_address"),
-            country=row.pop("country")
+            city=row.pop("address_city"),
+            street_address=row.pop("address_street_address"),
+            country=row.pop("address_country")
         )
 
     return [Hotel(**row) for row in res]
@@ -114,9 +118,9 @@ def get_top_hotels(limit: int = 10) -> list[Hotel]:
 
     for row in res:
         row["address"] = Address(
-            city=row.pop("city"),
-            street_address=row.pop("street_address"),
-            country=row.pop("country")
+            city=row.pop("address_city"),
+            street_address=row.pop("address_street_address"),
+            country=row.pop("address_country")
         )
 
     return [Hotel(**row) for row in res]
@@ -134,9 +138,9 @@ def get_hotel_details(hotel_id: int) -> Hotel:
 
     row = res[0]
     row["address"] = Address(
-        city=row.pop("city"),
-        street_address=row.pop("street_address"),
-        country=row.pop("country")
+        city=row.pop("address_city"),
+        street_address=row.pop("address_street_address"),
+        country=row.pop("address_country")
     )
     row["email_addresses"] = parse_pg_array(row.pop("email_address", None))
 
@@ -398,9 +402,9 @@ def get_hotels_in_chain(chain_name: str, current_user: AuthenticatedUser = Depen
 
     for row in res:
         row["address"] = Address(
-            city=row.pop("city"),
-            street_address=row.pop("street_address"),
-            country=row.pop("country")
+            city=row.pop("address_city"),
+            street_address=row.pop("address_street_address"),
+            country=row.pop("address_country")
         )
         row["email_addresses"] = parse_pg_array(row.get("email_addresses"))
 
