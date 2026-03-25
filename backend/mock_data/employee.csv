@@ -1,9 +1,9 @@
-1,Alice,Smith,"123 Maple St, Grand Rapids, USA",ef92b778ba2c97da142ee27111400036669a1e4d27375a95818d3066AD541C10,admin,1
-2,Bob,Johnson,"456 Oak Ave, Grand Rapids, USA",ef92b778ba2c97da142ee27111400036669a1e4d27375a95818d3066AD541C10,admin,2
-3,Charlie,Brown,"789 Pine Rd, Nashville, USA",ef92b778ba2c97da142ee27111400036669a1e4d27375a95818d3066AD541C10,admin,3
-4,Diana,Prince,"321 Elm St, Nashville, USA",ef92b778ba2c97da142ee27111400036669a1e4d27375a95818d3066AD541C10,admin,4
-5,Edward,Norton,"654 Birch Ln, Fox Creek, CAN",ef92b778ba2c97da142ee27111400036669a1e4d27375a95818d3066AD541C10,admin,5
-6,Fiona,Gallagher,"987 Cedar Dr, Shreveport, USA",ef92b778ba2c97da142ee27111400036669a1e4d27375a95818d3066AD541C10,admin,6
-7,George,Miller,"159 Spruce Ct, Fort Lauderdale, USA",ef92b778ba2c97da142ee27111400036669a1e4d27375a95818d3066AD541C10,admin,7
-8,Hannah,Abbott,"753 Willow Way, Grand Rapids, USA",ef92b778ba2c97da142ee27111400036669a1e4d27375a95818d3066AD541C10,admin,8
-9,Ian,Wright,"852 Aspen Blvd, Grand Rapids, USA",ef92b778ba2c97da142ee27111400036669a1e4d27375a95818d3066AD541C10,regular,1
+1,Alice,Smith,"123 Maple St, Grand Rapids, USA",$2b$12$pGi6IFbRjKLbsxc7DZD3ueeo5zcGc2sr5gFqVzojYIv3BnlSLLbAO,admin,1
+2,Bob,Johnson,"456 Oak Ave, Grand Rapids, USA",$2b$12$pGi6IFbRjKLbsxc7DZD3ueeo5zcGc2sr5gFqVzojYIv3BnlSLLbAO,admin,2
+3,Charlie,Brown,"789 Pine Rd, Nashville, USA",$2b$12$pGi6IFbRjKLbsxc7DZD3ueeo5zcGc2sr5gFqVzojYIv3BnlSLLbAO,admin,3
+4,Diana,Prince,"321 Elm St, Nashville, USA",$2b$12$pGi6IFbRjKLbsxc7DZD3ueeo5zcGc2sr5gFqVzojYIv3BnlSLLbAO,admin,4
+5,Edward,Norton,"654 Birch Ln, Fox Creek, CAN",$2b$12$pGi6IFbRjKLbsxc7DZD3ueeo5zcGc2sr5gFqVzojYIv3BnlSLLbAO,admin,5
+6,Fiona,Gallagher,"987 Cedar Dr, Shreveport, USA",$2b$12$pGi6IFbRjKLbsxc7DZD3ueeo5zcGc2sr5gFqVzojYIv3BnlSLLbAO,admin,6
+7,George,Miller,"159 Spruce Ct, Fort Lauderdale, USA",$2b$12$pGi6IFbRjKLbsxc7DZD3ueeo5zcGc2sr5gFqVzojYIv3BnlSLLbAO,admin,7
+8,Hannah,Abbott,"753 Willow Way, Grand Rapids, USA",$2b$12$pGi6IFbRjKLbsxc7DZD3ueeo5zcGc2sr5gFqVzojYIv3BnlSLLbAO,admin,8
+9,Ian,Wright,"852 Aspen Blvd, Grand Rapids, USA",$2b$12$pGi6IFbRjKLbsxc7DZD3ueeo5zcGc2sr5gFqVzojYIv3BnlSLLbAO,regular,1
