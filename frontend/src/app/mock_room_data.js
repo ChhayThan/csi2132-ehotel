@@ -1,0 +1,96 @@
+const roomImageOne =
+  "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 720'><defs><linearGradient id='sky' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='%23ddd4c4'/><stop offset='100%' stop-color='%23b8d3df'/></linearGradient></defs><rect width='1200' height='720' fill='url(%23sky)'/><rect x='0' y='235' width='760' height='345' fill='%23b9afa0'/><rect x='0' y='325' width='760' height='255' fill='%23f7f6f3'/><rect x='55' y='352' width='470' height='165' rx='12' fill='%23ffffff'/><rect x='490' y='304' width='105' height='87' rx='6' fill='%236d665d'/><rect x='520' y='238' width='58' height='65' rx='6' fill='%23f7e5ad'/><rect x='805' y='176' width='320' height='292' rx='14' fill='%23eef4fa'/><rect x='838' y='208' width='252' height='220' rx='4' fill='%2394cbe7'/><rect x='825' y='465' width='150' height='105' rx='75' fill='%23a4b7b0'/><ellipse cx='943' cy='628' rx='252' ry='63' fill='%2385b6b5'/><circle cx='920' cy='565' r='68' fill='none' stroke='%232f343a' stroke-width='10'/><line x1='880' y1='620' x2='958' y2='511' stroke='%232f343a' stroke-width='10'/></svg>";
+
+const roomImageTwo =
+  "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 720'><defs><linearGradient id='bg' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='%23604534'/><stop offset='100%' stop-color='%23d8b98f'/></linearGradient></defs><rect width='1200' height='720' fill='%232d241f'/><rect x='0' y='245' width='1200' height='475' fill='url(%23bg)' opacity='0.6'/><rect x='50' y='225' width='470' height='285' rx='16' fill='%23857163'/><rect x='80' y='305' width='400' height='165' rx='10' fill='%23efe6d6'/><rect x='520' y='195' width='60' height='170' rx='16' fill='%23f3dbab'/><rect x='640' y='118' width='300' height='500' rx='18' fill='%238b7567' opacity='0.68'/><rect x='960' y='180' width='160' height='340' rx='10' fill='%2314191f'/><rect x='985' y='220' width='110' height='135' rx='8' fill='%232b8cd6'/></svg>";
+
+const roomImageThree =
+  "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 720'><defs><linearGradient id='wall' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='%23312e30'/><stop offset='100%' stop-color='%23504a4b'/></linearGradient></defs><rect width='1200' height='720' fill='%23d8d4d0'/><rect x='0' y='0' width='1200' height='340' fill='url(%23wall)'/><rect x='180' y='268' width='520' height='235' rx='18' fill='%23a2968d'/><rect x='220' y='310' width='440' height='140' rx='12' fill='%23ddd7d1'/><rect x='115' y='285' width='85' height='170' rx='10' fill='%23292729'/><rect x='700' y='285' width='85' height='170' rx='10' fill='%23292729'/><rect x='825' y='120' width='285' height='500' rx='12' fill='%23e6e5df'/><rect x='845' y='155' width='245' height='440' rx='4' fill='%23c4e4dc'/><rect x='950' y='130' width='16' height='480' fill='%2393c09c'/><circle cx='160' cy='170' r='44' fill='%23f3d6a0'/><circle cx='748' cy='170' r='44' fill='%23f3d6a0'/></svg>";
+
+export const mockHotel = {
+  id: "grand-azure",
+  name: "The Grand Azure",
+  chainName: "Azure Resorts",
+  city: "Toronto",
+  address: "100 King St",
+  rating: 4.95,
+  reviewCount: 641,
+  contactEmail: "hotel-email@example.com",
+  contactPhone: "123-456-7890",
+};
+
+export const mockRooms = [
+  {
+    id: "123",
+    roomNumber: 123,
+    roomType: "Double",
+    subtitle: "Single (fits 2 guests)",
+    view: "Ocean",
+    price: 299,
+    image: roomImageOne,
+    amenities: ["Ocean View", "TV", "WiFi", "Kitchen", "Toaster", "Balcony", "Heating", "AC", "+16"],
+    detailAmenities: [
+      "Free WiFi",
+      "Free toiletries",
+      "Heating",
+      "Air conditioning",
+      "Bedsheets",
+      "Pillows",
+      "TV",
+      "Kitchen",
+      "Cookware/dishware",
+      "Utensils",
+      "Mini fridge",
+      "Balcony",
+      "Microwave",
+      "Oven",
+      "Stove",
+      "Toaster",
+    ],
+    problemMessage:
+      "The air conditioning is currently under repair. Expected repair date: April 19th.",
+    extendable: false,
+  },
+  {
+    id: "1031",
+    roomNumber: 1031,
+    roomType: "Suite",
+    subtitle: "Suite (fits 4 guests)",
+    view: "Ocean",
+    price: 699,
+    image: roomImageTwo,
+    amenities: ["Ocean View", "TV", "WiFi", "Kitchen", "Toaster", "Balcony", "Heating", "AC", "+16"],
+    detailAmenities: [
+      "Free WiFi",
+      "Kitchen",
+      "Balcony",
+      "Air conditioning",
+      "Heating",
+      "Microwave",
+      "Dining table",
+      "Toaster",
+    ],
+    problemMessage: "",
+    extendable: true,
+  },
+  {
+    id: "1281",
+    roomNumber: 1281,
+    roomType: "Single",
+    subtitle: "Single (fits 2 guests)",
+    view: "Ocean",
+    price: 329,
+    image: roomImageThree,
+    amenities: ["Ocean View", "TV", "WiFi", "Kitchen", "Toaster", "Balcony", "Heating", "AC", "+16"],
+    detailAmenities: [
+      "Free WiFi",
+      "TV",
+      "Heating",
+      "Air conditioning",
+      "Desk",
+      "Balcony",
+    ],
+    problemMessage: "",
+    extendable: false,
+  },
+];
