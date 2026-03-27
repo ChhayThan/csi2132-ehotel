@@ -1,29 +1,338 @@
-import {useState} from 'react';
-import heroBg from '../assets/hero_bg.jpg'
+import { useState, useRef } from 'react';
+
+import SearchIcon from "@mui/icons-material/SearchOutlined";
+import CalendarIcon from "@mui/icons-material/CalendarMonth";
+import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
+import FilterIcon from "@mui/icons-material/FilterAltOutlined";
+
+import heroBg from '../assets/hero_bg.jpg';
+import CardGrid from '../components/card_grid.tsx';
+import HotelCard from '../components/hotel_card.tsx';
 
 function Home() {
 
+  //mock data
+  const hotelImage =
+  "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 900 620'><defs><linearGradient id='bg' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='%2378a8ff'/><stop offset='100%' stop-color='%23d7e6ff'/></linearGradient></defs><rect width='900' height='620' fill='url(%23bg)'/><rect x='180' y='130' width='360' height='340' fill='%23bd735f'/><rect x='540' y='190' width='120' height='280' fill='%2394706b'/><rect x='180' y='470' width='480' height='34' fill='%23717e63'/><g fill='%23ecf2ff'><rect x='215' y='165' width='46' height='58'/><rect x='282' y='165' width='46' height='58'/><rect x='349' y='165' width='46' height='58'/><rect x='416' y='165' width='46' height='58'/><rect x='215' y='248' width='46' height='58'/><rect x='282' y='248' width='46' height='58'/><rect x='349' y='248' width='46' height='58'/><rect x='416' y='248' width='46' height='58'/><rect x='215' y='331' width='46' height='58'/><rect x='282' y='331' width='46' height='58'/><rect x='349' y='331' width='46' height='58'/><rect x='416' y='331' width='46' height='58'/></g></svg>";
+
+  const topHotelMockData = [
+    {
+      href: "/rooms/123",
+      img: hotelImage,
+      rating: 5,
+      name: "The Grand Azure",
+      chain_name: "Azure Resorts",
+      city: "Toronto",
+      address: "100 King St",
+      starting_cost: 299,
+      available_rooms: 6
+    },
+    {
+      href: "/rooms/124",
+      img: hotelImage,
+      rating: 5,
+      name:"Harbour Crest",
+      chain_name:"Azure Resorts",
+      city:"Toronto",
+      address:"88 Queens Quay",
+      starting_cost:259,
+      available_rooms:4
+    }, 
+    {
+      href:"/rooms/125",
+      img:hotelImage,
+      rating:4,
+      name:"Cityline Suites",
+      chain_name:"Azure Resorts",
+      city:"Toronto",
+      address:"12 Front St",
+      starting_cost:219,
+      available_rooms:8
+    }
+  ]
+
+  const hotelMockData = [
+    {
+      href: "/rooms/123",
+      img: hotelImage,
+      rating: 5,
+      name: "The Grand Azure",
+      chain_name: "Azure Resorts",
+      city: "Toronto",
+      address: "100 King St",
+      starting_cost: 299,
+      available_rooms: 6
+    },
+    {
+      href: "/rooms/124",
+      img: hotelImage,
+      rating: 5,
+      name:"Harbour Crest",
+      chain_name:"Azure Resorts",
+      city:"Toronto",
+      address:"88 Queens Quay",
+      starting_cost:259,
+      available_rooms:4
+    }, 
+    {
+      href:"/rooms/125",
+      img:hotelImage,
+      rating:4,
+      name:"Cityline Suites",
+      chain_name:"Azure Resorts",
+      city:"Toronto",
+      address:"12 Front St",
+      starting_cost:219,
+      available_rooms:8
+    },
+    {
+      href: "/rooms/126",
+      img: hotelImage,
+      rating: 5,
+      name: "The Grand Azure",
+      chain_name: "Azure Resorts",
+      city: "Toronto",
+      address: "100 King St",
+      starting_cost: 299,
+      available_rooms: 6
+    },
+    {
+      href: "/rooms/127",
+      img: hotelImage,
+      rating: 5,
+      name:"Harbour Crest",
+      chain_name:"Azure Resorts",
+      city:"Toronto",
+      address:"88 Queens Quay",
+      starting_cost:259,
+      available_rooms:4
+    }, 
+    {
+      href:"/rooms/128",
+      img:hotelImage,
+      rating:4,
+      name:"Cityline Suites",
+      chain_name:"Azure Resorts",
+      city:"Toronto",
+      address:"12 Front St",
+      starting_cost:219,
+      available_rooms:8
+    }
+  ]
+
+  const [heroLocation, setHeroLocation] = useState("");
+  const [heroDate, setHeroDate] = useState("");
+  const [heroNumGuests, setHeroNumGuests] = useState(null);
+  const [location, setLocation] = useState("");
+  const [date, setDate] = useState("");
+  const [numGuests, setNumGuests] = useState(null);
+
+  const [topHotels, setTopHotels] = useState(topHotelMockData);
+  const [hotels, setHotels] = useState(hotelMockData);
+
+  const searchSecRef = useRef(null);
+
+  // hero section on search 
+  const handleHeroSearch = (e) => {
+    e.preventDefault();
+
+    const params = {
+      location: heroLocation,
+      date: heroDate,
+      numGuests: heroNumGuests
+    }
+
+    setLocation(heroLocation);
+    setDate(heroDate);
+    setNumGuests(heroNumGuests);
+
+    handleHotelSearch(params);
+    scrollToResults();
+  };
+
+  const handleHotelSearch = (params) => {
+    // thing
+  };
+
+  const scrollToResults = () => {
+    searchSecRef.current?.scrollIntoView({behavior: "smooth"});
+  };
+
   return (
-    <div className="home">
+    <div className="home flex flex-col gap-40">
       <div 
-        className="relative w-full h-[50vh] flex items-center rounded-b-lg" 
+        className="relative w-full h-100 flex justify-center items-end rounded-b-lg" 
         style ={{
           backgroundImage: `url(${heroBg})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center 70%'
         }}
       >
-
+        <div className="max-w-120 bg-white p-7 shadow-lg rounded-xl flex flex-col gap-5 translate-y-1/5">
+          <p className="text-lg">Find and book the perfect room for you.</p>
+          <form onSubmit={handleHeroSearch} className="flex flex-col gap-4">
+            <div className="flex items-center rounded-lg border border-black/30 text-sm">
+              <LocationOnOutlinedIcon className="ml-2 text-[1.35rem] text-black/55"/>
+              <input 
+                  placeholder="Where to?"
+                  value={heroLocation}
+                  onChange={(e) => setHeroLocation(e.target.value)}
+                  className="w-full px-2 py-3 outline-none"
+              />
+            </div>
+            <div className="flex gap-4 text-sm">
+              <div className="flex-1 flex items-center rounded-lg border border-black/30 text-sm">
+                <CalendarIcon className="ml-2 text-[1.35rem] text-black/55"/>
+                <input 
+                    type="date"
+                    value={heroDate}
+                    onChange={(e) => setHeroDate(e.target.value)}
+                    min={new Date().toISOString().split("T")[0]}
+                    className="w-full px-2 py-3 outline-none"
+                />
+              </div>
+              <input 
+                  placeholder="Guests"
+                  value={heroNumGuests}
+                  onChange={(e) => setHeroNumGuests(e.target.value)}
+                  required
+                  className="w-1/3 rounded-lg px-3 py-3 border border-black/30"
+              />
+            </div>
+            <button type="submit" className="cursor-pointer flex justify-center rounded-lg bg-gradient-to-r from-primary to-blue-900 px-10 py-3 text-sm font-semibold text-white shadow-[0_6px_14px_rgba(0,0,0,0.18)]"> 
+              <SearchIcon className="mr-1 text-[1.35rem] text-white"/>
+              <p>FIND HOTELS</p>
+            </button>
+          </form>
+        </div>
       </div>
-      <p>dsafsdifjsfds</p>
-      <p>dsafsdifjsfds</p>
-      <p>dsafsdifjsfds</p>
-      <p>dsafsdifjsfds</p>
-      <p className="h-120">dsafsdifjsfds</p>
-      <p>dsafsdifjsfds</p>
-      <p>dsafsdifjsfds</p>
-      <p>dsafsdifjsfds</p>
-      <p>dsafsdifjsfds</p>
+
+      {/* top hotels section */}
+      <div className="max-w-6xl w-full mx-auto px-5 flex flex-col">
+        <p className="text-3xl mb-5">Our top rated hotels, for you.</p>
+        <CardGrid>
+          {topHotels.map((hotel) => (
+            <HotelCard 
+              href={hotel.href}
+              img={hotel.img}
+              rating={hotel.rating}
+              name={hotel.name}
+              chain_name={hotel.chain_name}
+              city={hotel.city}
+              address={hotel.address}
+              starting_cost={hotel.starting_cost}
+              available_rooms={hotel.available_rooms}
+            />
+          ))}
+        </CardGrid>
+      </div>
+
+      {/* main search section */}
+      <div ref={searchSecRef} className="max-w-6xl w-full px-5 mx-auto flex flex-col gap-5">
+        <p className="text-3xl w-full">Search through our hotels.</p>
+        <div className="bg-white rounded-xl p-7 shadow-lg w-full">
+          <form onSubmit={handleHotelSearch} className="flex flex-col md:flex-row gap-3 md:gap-5 w-full">
+            <div className="flex-1 flex items-center rounded-lg border border-black/30 text-sm">
+              <LocationOnOutlinedIcon className="ml-2 text-[1.35rem] text-black/55"/>
+              <input 
+                  placeholder="Where to?"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  className="w-full px-2 py-3 outline-none"
+              />
+            </div>
+            <div className="flex-1 flex items-center rounded-lg border border-black/30 text-sm">
+              <CalendarIcon className="ml-2 text-[1.35rem] text-black/55"/>
+              <input 
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  min={new Date().toISOString().split("T")[0]}
+                  className="w-full px-2 py-3 outline-none"
+              />
+            </div>
+            <input 
+                placeholder="Guests"
+                value={numGuests}
+                onChange={(e) => setNumGuests(e.target.value)}
+                required
+                className="text-sm w-full md:w-1/6 rounded-lg px-3 py-3 border border-black/30"
+            />
+            <button type="submit" className="cursor-pointer flex justify-center rounded-lg bg-gradient-to-r from-primary to-blue-900 px-5 py-3 text-sm font-semibold text-white shadow-[0_6px_14px_rgba(0,0,0,0.18)]"> 
+              <SearchIcon className="mr-1 text-[1.35rem] text-white"/>
+              <p>SEARCH</p>
+            </button>
+          </form>
+        </div>
+        <div className="flex flex-col md:flex-row gap-12">
+
+          {/* filters */}
+          <aside className="h-fit rounded-xl bg-white p-8 shadow-lg md:min-w-70">
+            <div className="flex items-center">
+              <FilterIcon className="text-[1.2rem] text-black/55"/>
+              <p className="text-sm font-semibold text-slate-500">
+                Filters
+              </p>
+            </div>
+            <div className="mt-5 space-y-5 text-sm text-slate-600">
+              <div>
+                <p className="font-medium text-slate-900">Hotel Chain</p>
+                <div className="flex items-center rounded-lg border border-black/30 text-sm mt-2">
+                  <SearchIcon className="ml-2 text-[1.2rem] text-black/55"/>
+                  <input 
+                      placeholder="Search hotel chains"
+                      className="w-full px-2 py-2 outline-none"
+                  />
+                </div>
+              </div>
+              <div>
+                <p className="font-medium text-slate-900">Rating</p>
+                <div className="mt-2 text-lg text-yellow-500">
+                  <label className="flex items-center gap-2"><input type="checkbox" />★★★★★</label>
+                  <label className="flex items-center gap-2"><input type="checkbox" />★★★★</label>
+                  <label className="flex items-center gap-2"><input type="checkbox" />★★★</label>
+                  <label className="flex items-center gap-2"><input type="checkbox" />★★</label>
+                  <label className="flex items-center gap-2"><input type="checkbox" />★</label>
+                </div>
+              </div>
+              <div>
+                <div className="flex items-center justify-between">
+                  <p className="font-medium text-slate-900">Price Range</p>
+                  <span>$450</span>
+                </div>
+                <input type="range" min="0" max="1000" defaultValue="450" className="mt-3 w-full" />
+                <div className="mt-2 flex justify-between text-xs text-slate-400">
+                  <span>$0</span>
+                  <span>$1000</span>
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          {/* results */}
+          <div className="flex flex-col gap-5 w-full">
+            <div className="flex justify-between w-full">
+              <p className="text-2xl">{hotels.length} hotel{hotels.length === 1 ? "" : "s"} found.</p>
+              <p>hi</p>
+            </div>
+            <CardGrid>
+              {hotels.map((hotel) => (
+                <HotelCard 
+                  href={hotel.href}
+                  img={hotel.img}
+                  rating={hotel.rating}
+                  name={hotel.name}
+                  chain_name={hotel.chain_name}
+                  city={hotel.city}
+                  address={hotel.address}
+                  starting_cost={hotel.starting_cost}
+                  available_rooms={hotel.available_rooms}
+                />
+              ))}
+            </CardGrid>
+          </div>
+        </div>
+      </div>
     </div>
 
   );
