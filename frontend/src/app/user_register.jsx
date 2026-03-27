@@ -1,10 +1,15 @@
+import { Link } from 'react-router-dom';
 import interiorBg from '../assets/interior_bg.png';
 import RegisterCard from '../components/register_card';
+import Logo from '../assets/logo_white.svg';
 
 function UserRegisterPage() {
 
   return (
     <div className="flex h-screen">
+        <Link to="/" className="absolute top-6 left-6 z-100">
+            <img src={Logo} alt="eHotel logo" className="h-6 w-auto cursor-pointer" />
+        </Link>
         <div 
             className= "relative w-screen h-full flex justify-center items-center md:w-2/3 md:justify-end" 
             style = {{
