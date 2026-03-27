@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 import SearchIcon from "@mui/icons-material/SearchOutlined";
 import CalendarIcon from "@mui/icons-material/CalendarMonth";
@@ -130,7 +130,42 @@ function Home() {
   const [topHotels, setTopHotels] = useState(topHotelMockData);
   const [hotels, setHotels] = useState(hotelMockData);
 
-  const searchSecRef = useRef(null);
+  // filter stuff
+  const [filteredHotels, setFilteredHotels] = useState(hotelMockData);
+  const [filters, setFilters] = useState({
+    search: "",
+    rating: [],
+    maxPrice: 450,
+    chain: "",
+  });
+
+  useEffect(() => {
+    let res = [...hotels];
+
+    // chain filter
+    if (filters.chain) {
+      res = res.filter((hotel) => hotel.chain_name.toLowerCase().includes(filters.chain.toLowerCase()));
+    }
+
+    // price filter
+    res = res.filter((hotel) => hotel.starting_cost <= filters.maxPrice);
+
+    // rating filter
+    if (filters.rating.length > 0) {
+      res = res.filter((hotel) => filters.rating.includes(hotel.rating));
+    }
+
+    setFilteredHotels(res);
+  }, [filters, hotels])
+
+  const handleRatingChange = (value) => (e) => {
+    setFilters((prev) => ({
+      ...prev,
+      rating: e.target.checked 
+        ? [...prev.rating, value] 
+        : prev.rating.filter((x) => x !== value),
+    }));
+  };
 
   // hero section on search 
   const handleHeroSearch = (e) => {
@@ -154,6 +189,7 @@ function Home() {
     // thing
   };
 
+  const searchSecRef = useRef(null);
   const scrollToResults = () => {
     searchSecRef.current?.scrollIntoView({behavior: "smooth"});
   };
@@ -281,6 +317,12 @@ function Home() {
                   <SearchIcon className="ml-2 text-[1.2rem] text-black/55"/>
                   <input 
                       placeholder="Search hotel chains"
+                      onChange={(e) =>
+                        setFilters((prev) => ({
+                          ...prev,
+                          chain: e.target.value,
+                        }))
+                      }
                       className="w-full px-2 py-2 outline-none"
                   />
                 </div>
@@ -288,11 +330,11 @@ function Home() {
               <div>
                 <p className="font-medium text-slate-900">Rating</p>
                 <div className="mt-2 text-lg text-yellow-500">
-                  <label className="flex items-center gap-2"><input type="checkbox" />★★★★★</label>
-                  <label className="flex items-center gap-2"><input type="checkbox" />★★★★</label>
-                  <label className="flex items-center gap-2"><input type="checkbox" />★★★</label>
-                  <label className="flex items-center gap-2"><input type="checkbox" />★★</label>
-                  <label className="flex items-center gap-2"><input type="checkbox" />★</label>
+                  <label className="flex items-center gap-2"><input type="checkbox" onChange={handleRatingChange(5)} checked={filters.rating.includes(5)} />★★★★★</label>
+                  <label className="flex items-center gap-2"><input type="checkbox" onChange={handleRatingChange(4)} checked={filters.rating.includes(4)} />★★★★</label>
+                  <label className="flex items-center gap-2"><input type="checkbox" onChange={handleRatingChange(3)} checked={filters.rating.includes(3)} />★★★</label>
+                  <label className="flex items-center gap-2"><input type="checkbox" onChange={handleRatingChange(2)} checked={filters.rating.includes(2)} />★★</label>
+                  <label className="flex items-center gap-2"><input type="checkbox" onChange={handleRatingChange(1)} checked={filters.rating.includes(1)} />★</label>
                 </div>
               </div>
               <div>
@@ -300,7 +342,19 @@ function Home() {
                   <p className="font-medium text-slate-900">Price Range</p>
                   <span>$450</span>
                 </div>
-                <input type="range" min="0" max="1000" defaultValue="450" className="mt-3 w-full" />
+                <input 
+                  type="range" 
+                  min="0" 
+                  max="1000" 
+                  defaultValue="450" 
+                  className="mt-3 w-full" 
+                  onChange={(e) => 
+                    setFilters((prev) => ({
+                      ...prev,
+                      maxPrice: Number(e.target.value),
+                    }))
+                  }
+                />
                 <div className="mt-2 flex justify-between text-xs text-slate-400">
                   <span>$0</span>
                   <span>$1000</span>
@@ -312,11 +366,11 @@ function Home() {
           {/* results */}
           <div className="flex flex-col gap-5 w-full">
             <div className="flex justify-between w-full">
-              <p className="text-2xl">{hotels.length} hotel{hotels.length === 1 ? "" : "s"} found.</p>
-              <p>hi</p>
+              <p className="text-2xl">{filteredHotels.length} hotel{filteredHotels.length === 1 ? "" : "s"} found.</p>
+              <p>add dropdown tab here eventually</p>
             </div>
             <CardGrid>
-              {hotels.map((hotel) => (
+              {filteredHotels.map((hotel) => (
                 <HotelCard 
                   href={hotel.href}
                   img={hotel.img}
