@@ -17,7 +17,7 @@ const LoginCard = ({user_type}: LoginCardProps) => {
     // LOGIN LOGIC
   }
 
-  return <div className="bg-white flex flex-col gap-4 w-100 p-9 rounded-xl shadow-xl">
+  return <div className="bg-white flex flex-col gap-4 w-100 p-9 rounded-xl shadow-lg shadow-black/60">
     <h2 className="text-lg">Login</h2>
     <form onSubmit={handleLogin} className="flex flex-col gap-2 mt-2">
       {user_type === "User" && (
