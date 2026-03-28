@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Literal, Optional
 
 from pydantic import BaseModel, EmailStr, Field
 
@@ -9,6 +9,14 @@ class CustomerRegisterRequest(BaseModel):
     first_name: str = Field(min_length=1)
     last_name: str = Field(min_length=1)
     drivers_license: str = Field(min_length=1, max_length=64)
+    address: str = Field(min_length=1)
+
+
+class EmployeeCreationRequest(BaseModel):
+    password: str = Field(min_length=8, max_length=72)
+    first_name: str = Field(min_length=1)
+    last_name: str = Field(min_length=1)
+    role: Literal["employee", "admin"]
     address: str = Field(min_length=1)
 
 
