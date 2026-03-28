@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS hotel_chain_email (
     name VARCHAR(255),
     email_address EMAIL,
 	PRIMARY KEY (name, email_address),
-    FOREIGN KEY (name) REFERENCES hotel_chain(name) ON DELETE CASCADE
+    FOREIGN KEY (name) REFERENCES hotel_chain(name) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS employee (
@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS hotel (
     chain_name VARCHAR(255) NOT NULL,
     manager_eid INTEGER,
     FOREIGN KEY (manager_eid) REFERENCES employee(id) ON DELETE RESTRICT,
-    FOREIGN KEY (chain_name) REFERENCES hotel_chain(name) ON DELETE CASCADE
+    FOREIGN KEY (chain_name) REFERENCES hotel_chain(name) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS hotel_email (
@@ -80,8 +80,8 @@ CREATE TABLE IF NOT EXISTS booking (
     room_number POSITIVE_INTEGER,
     customer_id VARCHAR(64),
     creation_date DATE NOT NULL,
-    checkin_date DATE NOT NULL,
-    checkout_date DATE NOT NULL,
+    checkin_date DATE NOT NULL CHECK (checkin_date > creation_date),
+    checkout_date DATE NOT NULL CHECK (checkout_date > checkin_date),
     FOREIGN KEY (hid, room_number) REFERENCES room(hid, room_number) ON DELETE RESTRICT,
     FOREIGN KEY (customer_id) REFERENCES customer(id) ON DELETE CASCADE
 );
