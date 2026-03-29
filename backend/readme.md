@@ -23,18 +23,13 @@ Auth endpoints:
 
 Database:
 
-- `DATABASE_URL`
 - `DB_NAME` default: `ehoteldb`
 - `DB_HOST` default: `localhost`
 - `DB_PORT` default: `5432`
 - `DB_USER` default: `public`
 - `DB_PASSWORD` default: empty string
 
-Connection precedence:
-
-- if `DATABASE_URL` is set, the backend uses it
-- otherwise it falls back to the individual `DB_*` variables
-- if those are not set, it uses the defaults above
+If the `DB_*` variables are not set, it uses the defaults above
 
 Example local setup:
 
@@ -42,7 +37,6 @@ Example local setup:
 export AUTH_SECRET_KEY="change-me"
 export AUTH_ALGORITHM="HS256"
 export AUTH_ACCESS_TOKEN_EXPIRE_MINUTES="60"
-export DATABASE_URL="postgresql://public:@localhost:5432/ehoteldb"
 ```
 
 ```

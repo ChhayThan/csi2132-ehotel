@@ -1,0 +1,18 @@
+import os
+
+
+DB_NAME = os.getenv("DB_NAME", "ehoteldb")
+DB_HOST = os.getenv("DB_HOST", "localhost")
+DB_PORT = int(os.getenv("DB_PORT", "5432"))
+DB_USER = os.getenv("DB_USER", "public")
+DB_PASSWORD = os.getenv("DB_PASSWORD", "")
+
+WEBSERVER_USER_PASSWORD = os.getenv("DB_WS_USER_PASSWORD", default=DB_PASSWORD)
+WEBSERVER_CUSTOMER_USER_PASSWORD = os.getenv("DB_WS_CUSTOMER_PASSWORD", default=WEBSERVER_USER_PASSWORD)
+WEBSERVER_EMPLOYEE_USER_PASSWORD = os.getenv("DB_WS_EMPLOYEE_PASSWORD", default=WEBSERVER_USER_PASSWORD)
+WEBSERVER_ADMIN_USER_PASSWORD = os.getenv("DB_WS_ADMIN_PASSWORD", default=WEBSERVER_EMPLOYEE_USER_PASSWORD)
+
+WS_USER = "webserver"
+WS_CUSTOMER_USER = "ws_customer"
+WS_EMPLOYEE_USER = "ws_employee"
+WS_ADMIN_USER = "ws_admin"

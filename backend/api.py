@@ -1,7 +1,6 @@
 # api to query the database server
 
 import csv
-import os
 from datetime import date
 from io import StringIO
 from pathlib import Path
@@ -15,24 +14,31 @@ from psycopg2.errors import UniqueViolation, ForeignKeyViolation, IntegrityError
 from auth import create_access_token, get_current_user, hash_password, require_admin, require_customer, require_employee, verify_password
 from auth_models import AuthenticatedUser, CurrentCustomerResponse, CurrentEmployeeResponse, CustomerLoginRequest, CustomerRegisterRequest, EmployeeCreationRequest, EmployeeLoginRequest, TokenResponse, TokenUser
 from data_models import Address, Booking, BookingUserDefined, Employee, EmployeePartial, Hotel, HotelChain, HotelChainUserDefined, HotelPartial, HotelUserDefined, PartialHotelChain, Renting, Room, RoomPartial, RoomUserDefined
+from constants import (
+	DB_HOST,
+	DB_NAME,
+	DB_PORT,
+	WEBSERVER_ADMIN_USER_PASSWORD,
+	WEBSERVER_CUSTOMER_USER_PASSWORD,
+	WEBSERVER_EMPLOYEE_USER_PASSWORD,
+	WEBSERVER_USER_PASSWORD,
+	WS_ADMIN_USER,
+	WS_CUSTOMER_USER,
+	WS_EMPLOYEE_USER,
+	WS_USER
+) 
 
 
 app = FastAPI()
 BASE_DIR = Path(__file__).resolve().parent
-DATABASE_URL = os.getenv("DATABASE_URL")
-DB_NAME = os.getenv("DB_NAME", "ehoteldb")
-DB_HOST = os.getenv("DB_HOST", "localhost")
-DB_PORT = int(os.getenv("DB_PORT", "5432"))
-DB_USER = os.getenv("DB_USER", "public")
-DB_PASSWORD = os.getenv("DB_PASSWORD", "")
 
 
 def query_db_from_sql_file(
         file_path: str,
         params: Any = (),
         identifiers: tuple | dict = None,
-        user: str = DB_USER,
-        password: str = DB_PASSWORD,
+        user: str = WS_USER,
+        password: str = WEBSERVER_USER_PASSWORD,
         host: str = DB_HOST,
         port: int = DB_PORT
         ):
@@ -50,8 +56,8 @@ def query_db_from_sql_file(
 
 def execute_multiple_from_sql_files(
         statements: dict[str, tuple[str, Any, tuple | dict | None]],
-        user: str = DB_USER,
-        password: str = DB_PASSWORD,
+        user: str = WS_USER,
+        password: str = WEBSERVER_USER_PASSWORD,
         host: str = DB_HOST,
         port: int = DB_PORT
         ):
@@ -73,7 +79,7 @@ def execute_multiple_from_sql_files(
     return query_db(queries, user, password, host, port)
 
 
-def query_db(statements: dict[str, tuple[str, Any]], user: str = DB_USER, password: str = DB_PASSWORD, host: str = DB_HOST, port: int = DB_PORT):
+def query_db(statements: dict[str, tuple[str, Any]], user: str = WS_USER, password: str = WEBSERVER_USER_PASSWORD, host: str = DB_HOST, port: int = DB_PORT):
     # Prefer DATABASE_URL when provided, but keep explicit params/env fallbacks for local use.
     connection_kwargs = {
         "dbname": DB_NAME,
@@ -82,13 +88,10 @@ def query_db(statements: dict[str, tuple[str, Any]], user: str = DB_USER, passwo
         "host": host,
         "port": port,
     }
-    connect_args = (DATABASE_URL,) if DATABASE_URL else ()
-    if DATABASE_URL:
-        connection_kwargs = {}
 
     res = {}
 
-    with connect(*connect_args, **connection_kwargs) as conn:
+    with connect(**connection_kwargs) as conn:
         # multiple requests in one with block bound and executed as single transaction
         for name, request in statements.items():
             query, params = request
@@ -337,6 +340,8 @@ def get_bookings(customer_id: str, archived: bool, current_user: AuthenticatedUs
     res = query_db_from_sql_file(
         "queries/bookings_for_customer.sql" if not archived else "queries/archived_bookings_for_customer.sql",
         {"customer_id": customer_id},
+        user=WS_CUSTOMER_USER,
+        password=WEBSERVER_CUSTOMER_USER_PASSWORD,
     )
 
     return [Booking(**row) for row in res]
@@ -350,6 +355,8 @@ def get_booking_details(customer_id: str, booking_id: int, current_user: Authent
     res = query_db_from_sql_file(
         "queries/booking_details.sql",
         {"ref_id": booking_id, "customer_id": customer_id},
+        user=WS_CUSTOMER_USER,
+        password=WEBSERVER_CUSTOMER_USER_PASSWORD,
     )
 
     if len(res) == 0:
@@ -376,6 +383,8 @@ def create_booking(customer_id, new_booking: BookingUserDefined, current_user: A
                 "checkin_date": new_booking.checkin_date,
                 "checkout_date": new_booking.checkout_date,
             },
+            user=WS_CUSTOMER_USER,
+            password=WEBSERVER_CUSTOMER_USER_PASSWORD,
         )
     except UniqueViolation:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Booking conflict")
@@ -395,6 +404,8 @@ def cancel_booking(customer_id: str, booking_id: int, current_user: Authenticate
     res = query_db_from_sql_file(
         "queries/modify/delete_booking.sql",
         {"booking_id": booking_id, "customer_id": customer_id},
+        user=WS_CUSTOMER_USER,
+        password=WEBSERVER_CUSTOMER_USER_PASSWORD,
     )
 
     if len(res) == 0:
@@ -410,6 +421,8 @@ def get_hotel_bookings(hotel_id: int, archived: bool, current_user: Authenticate
     res = query_db_from_sql_file(
         "queries/all_bookings_for_hotel.sql" if not archived else "queries/all_archived_bookings_for_hotel.sql",
         {"hid": hotel_id},
+        user=WS_EMPLOYEE_USER,
+        password=WEBSERVER_EMPLOYEE_USER_PASSWORD,
     )
     
     return [Booking(**row) for row in res]
@@ -420,6 +433,8 @@ def get_hotel_rentings(hotel_id: int, archived: bool, current_user: Authenticate
     res = query_db_from_sql_file(
         "queries/all_rentings_for_hotel.sql" if not archived else "queries/all_archived_rentings_for_hotel.sql",
         {"hid": hotel_id},
+        user=WS_EMPLOYEE_USER,
+        password=WEBSERVER_EMPLOYEE_USER_PASSWORD,
     )
 
     return [Renting(**row) for row in res]
@@ -460,6 +475,8 @@ def add_email_addresses(table_name: str, fk_col: str, fk_value: Any, email_addre
                     "email_table": table_name,
                     "fk_col": fk_col,
                 },
+                user=WS_ADMIN_USER,
+                password=WEBSERVER_ADMIN_USER_PASSWORD,
             )
         except UniqueViolation:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Email address {email_address} already associated with this entity")
@@ -470,6 +487,8 @@ def add_email_addresses(table_name: str, fk_col: str, fk_value: Any, email_addre
 def get_hotel_chains(current_user: AuthenticatedUser = Depends(require_admin)) -> list[HotelChain]:
     res = query_db_from_sql_file(
         "queries/all_hotel_chains.sql",
+        user=WS_ADMIN_USER,
+        password=WEBSERVER_ADMIN_USER_PASSWORD,
     )
 
     for row in res:
@@ -488,6 +507,8 @@ def create_hotel_chain(hotel_chain: HotelChainUserDefined, current_user: Authent
                 "address": hotel_chain.address.strip(),
                 "phone_number": hotel_chain.phone_number.strip(),
             },
+            user=WS_ADMIN_USER,
+            password=WEBSERVER_ADMIN_USER_PASSWORD,
         )
     except UniqueViolation:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Hotel chain already exists")
@@ -504,6 +525,8 @@ def edit_hotel_chain(chain_name: str, new_hotel_chain: PartialHotelChain, curren
     res = query_db_from_sql_file(
         "queries/hotel_chain_details.sql",
         {"name": chain_name},
+        user=WS_ADMIN_USER,
+        password=WEBSERVER_ADMIN_USER_PASSWORD,
     )
 
     if len(res) == 0:
@@ -552,7 +575,7 @@ def edit_hotel_chain(chain_name: str, new_hotel_chain: PartialHotelChain, curren
                 for email_address in new_hotel_chain.email_addresses
             })
 
-        res = execute_multiple_from_sql_files(transaction)
+        res = execute_multiple_from_sql_files(transaction, user=WS_ADMIN_USER, password=WEBSERVER_ADMIN_USER_PASSWORD)
     
     except UniqueViolation:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Uniqueness violation")
@@ -567,6 +590,8 @@ def delete_hotel_chain(chain_name: str, current_user: AuthenticatedUser = Depend
     res = query_db_from_sql_file(
         "queries/hotel_chain_details.sql",
         {"name": chain_name},
+        user=WS_ADMIN_USER,
+        password=WEBSERVER_ADMIN_USER_PASSWORD,
     )
 
     if len(res) == 0:
@@ -577,6 +602,8 @@ def delete_hotel_chain(chain_name: str, current_user: AuthenticatedUser = Depend
     query_db_from_sql_file(
         "queries/modify/delete_hotel_chain.sql",
         {"name": chain_name},
+        user=WS_ADMIN_USER,
+        password=WEBSERVER_ADMIN_USER_PASSWORD,
     )
 
     return old_chain
@@ -587,6 +614,8 @@ def get_hotels_in_chain(chain_name: str, current_user: AuthenticatedUser = Depen
     res = query_db_from_sql_file(
         "queries/all_hotels_in_chain.sql",
         {"chain_name": chain_name},
+        user=WS_ADMIN_USER,
+        password=WEBSERVER_ADMIN_USER_PASSWORD,
     )
 
     for row in res:
@@ -615,7 +644,9 @@ def create_hotel_in_chain(chain_name, hotel: HotelUserDefined, current_user: Aut
                 "image": hotel.image,
                 "chain_name": chain_name,
                 "manager_eid": hotel.manager_eid
-            }
+            },
+            user=WS_ADMIN_USER,
+            password=WEBSERVER_ADMIN_USER_PASSWORD,
         )
     except ForeignKeyViolation:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Hotel chain not found")
@@ -633,6 +664,8 @@ def edit_hotel_in_chain(chain_name: str, hotel_id: int, new_hotel: HotelPartial,
     res = query_db_from_sql_file(
         "queries/hotel_details.sql",
         {"hid": hotel_id},
+        user=WS_ADMIN_USER,
+        password=WEBSERVER_ADMIN_USER_PASSWORD,
     )
 
     if len(res) == 0:
@@ -684,7 +717,7 @@ def edit_hotel_in_chain(chain_name: str, hotel_id: int, new_hotel: HotelPartial,
                 for email_address in new_hotel.email_addresses
             })
 
-        res = execute_multiple_from_sql_files(transaction)
+        res = execute_multiple_from_sql_files(transaction, user=WS_ADMIN_USER, password=WEBSERVER_ADMIN_USER_PASSWORD)
     
     except UniqueViolation:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Uniqueness violation")
@@ -699,6 +732,8 @@ def delete_hotel_in_chain(chain_name: str, hotel_id: int, current_user: Authenti
     res = query_db_from_sql_file(
         "queries/hotel_details.sql",
         {"hid": hotel_id},
+        user=WS_ADMIN_USER,
+        password=WEBSERVER_ADMIN_USER_PASSWORD,
     )
 
     if len(res) == 0:
@@ -709,6 +744,8 @@ def delete_hotel_in_chain(chain_name: str, hotel_id: int, current_user: Authenti
     query_db_from_sql_file(
         "queries/modify/delete_hotel.sql",
         {"hid": hotel_id},
+        user=WS_ADMIN_USER,
+        password=WEBSERVER_ADMIN_USER_PASSWORD,
     )
 
     return old_hotel
@@ -719,6 +756,8 @@ def get_rooms_in_hotel(hotel_id: int, current_user: AuthenticatedUser = Depends(
     res = query_db_from_sql_file(
         "queries/all_rooms_for_hotel.sql",
         {"hid": hotel_id},
+        user=WS_ADMIN_USER,
+        password=WEBSERVER_ADMIN_USER_PASSWORD,
     )
 
     for row in res:
@@ -741,7 +780,9 @@ def create_room_in_hotel(chain_name: str, hotel_id: int, room: RoomUserDefined, 
                 "extendable": room.extendable,
                 "problem": room.problem,
                 "image": room.image,
-            }
+            },
+            user=WS_ADMIN_USER,
+            password=WEBSERVER_ADMIN_USER_PASSWORD,
         )
     except ForeignKeyViolation:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Hotel not found")
@@ -757,6 +798,8 @@ def create_room_in_hotel(chain_name: str, hotel_id: int, room: RoomUserDefined, 
                     "room_number": room.room_number,
                     "amenity": amenity.strip(),
                 },
+                user=WS_ADMIN_USER,
+                password=WEBSERVER_ADMIN_USER_PASSWORD,
             )
         except UniqueViolation:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Amenity {amenity} already associated with this room")
@@ -771,6 +814,8 @@ def edit_room_in_hotel(chain_name: str, hotel_id: int, room_number: int, new_roo
     res = query_db_from_sql_file(
         "queries/room_details.sql",
         {"hid": hotel_id, "room_number": room_number},
+        user=WS_ADMIN_USER,
+        password=WEBSERVER_ADMIN_USER_PASSWORD,
     )
 
     if len(res) == 0:
@@ -820,7 +865,7 @@ def edit_room_in_hotel(chain_name: str, hotel_id: int, room_number: int, new_roo
                 for amenity in new_room.amenities
             })
 
-        res = execute_multiple_from_sql_files(transaction)
+        res = execute_multiple_from_sql_files(transaction, user=WS_ADMIN_USER, password=WEBSERVER_ADMIN_USER_PASSWORD)
     
     except UniqueViolation:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Uniqueness violation")
@@ -835,6 +880,8 @@ def delete_room_in_hotel(chain_name: str, hotel_id: int, room_number: int, curre
     res = query_db_from_sql_file(
         "queries/room_details.sql",
         {"hid": hotel_id, "room_number": room_number},
+        user=WS_ADMIN_USER,
+        password=WEBSERVER_ADMIN_USER_PASSWORD,
     )
 
     if len(res) == 0:
@@ -845,6 +892,8 @@ def delete_room_in_hotel(chain_name: str, hotel_id: int, room_number: int, curre
     query_db_from_sql_file(
         "queries/modify/delete_room.sql",
         {"hid": hotel_id, "room_number": room_number},
+        user=WS_ADMIN_USER,
+        password=WEBSERVER_ADMIN_USER_PASSWORD,
     )
 
     return old_room
@@ -855,6 +904,8 @@ def get_employees_in_hotel(hotel_id: int, current_user: AuthenticatedUser = Depe
     res = query_db_from_sql_file(
         "queries/all_employees_of_hotel.sql",
         {"hid": hotel_id},
+        user=WS_ADMIN_USER,
+        password=WEBSERVER_ADMIN_USER_PASSWORD,
     )
 
     return [Employee(**row) for row in res]
@@ -873,6 +924,8 @@ def create_employee_in_hotel(chain_name: str, hotel_id: int, employee: EmployeeC
                 "role": employee.role,
                 "hid": hotel_id,
             },
+            user=WS_ADMIN_USER,
+            password=WEBSERVER_ADMIN_USER_PASSWORD,
         )
     except ForeignKeyViolation:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Hotel not found")
@@ -886,7 +939,9 @@ def create_employee_in_hotel(chain_name: str, hotel_id: int, employee: EmployeeC
 def edit_employee_in_hotel(chain_name: str, hotel_id: int, employee_id: int, new_employee: EmployeePartial, current_user: AuthenticatedUser = Depends(require_admin)) -> int:
     res = query_db_from_sql_file(
         "queries/employee_details.sql",
-        {"eid": employee_id}
+        {"eid": employee_id},
+        user=WS_ADMIN_USER,
+        password=WEBSERVER_ADMIN_USER_PASSWORD,
     )
 
     if len(res) == 0:
@@ -903,7 +958,9 @@ def edit_employee_in_hotel(chain_name: str, hotel_id: int, employee_id: int, new
                 "last_name": new_employee.last_name or old_employee.last_name,
                 "address": new_employee.address or old_employee.address,
                 "role": new_employee.role or old_employee.role
-            }
+            },
+            user=WS_ADMIN_USER,
+            password=WEBSERVER_ADMIN_USER_PASSWORD,
         )
     except IntegrityError:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid employee details")
@@ -915,7 +972,9 @@ def edit_employee_in_hotel(chain_name: str, hotel_id: int, employee_id: int, new
 def delete_employee_in_hotel(chain_name: str, hotel_id: int, employee_id: int, current_user: AuthenticatedUser = Depends(require_admin)) -> Employee:
     res = query_db_from_sql_file(
         "queries/employee_details.sql",
-        {"eid": employee_id}
+        {"eid": employee_id},
+        user=WS_ADMIN_USER,
+        password=WEBSERVER_ADMIN_USER_PASSWORD,
     )
 
     if len(res) == 0:
@@ -926,6 +985,8 @@ def delete_employee_in_hotel(chain_name: str, hotel_id: int, employee_id: int, c
     query_db_from_sql_file(
         "queries/modify/delete_employee.sql",
         {"eid": employee_id},
+        user=WS_ADMIN_USER,
+        password=WEBSERVER_ADMIN_USER_PASSWORD,
     )
 
     return old_employee
