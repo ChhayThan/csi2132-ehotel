@@ -1,0 +1,2 @@
+ALTER SEQUENCE hotel_hid_seq RESTART WITH 9;
+ALTER SEQUENCE employee_id_seq RESTART WITH 10;
