@@ -6,7 +6,7 @@ from ..session import parse_pg_array, query_db_from_sql_file
 from ..models.data_models import Address, Hotel, Room
 
 
-router = APIRouter(prefix="/hotel", tags=["public"])
+router = APIRouter(prefix="/hotels", tags=["public"])
 
 
 @router.get("/available")

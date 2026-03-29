@@ -83,17 +83,20 @@ class Booking(BookingUserDefined):
     creation_date: date
 
 
-class Renting(BaseModel):
-    ref_id: int
+class RentingUserDefined(BaseModel):
     hid: int
     room_number: int
     customer_id: str
-    employee_id: int
-    creation_date: date
     checkin_date: date
     checkout_date: date
     payment_type: str
     payment_amount: float
+
+
+class Renting(BaseModel):
+    ref_id: int
+    employee_id: int
+    creation_date: date
 
 
 class PartialHotelChain(BaseModel):

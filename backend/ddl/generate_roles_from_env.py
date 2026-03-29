@@ -22,7 +22,7 @@ if __name__ == '__main__':
 			(WS_EMPLOYEE_USER, WEBSERVER_EMPLOYEE_USER_PASSWORD),
 			(WS_ADMIN_USER, WEBSERVER_ADMIN_USER_PASSWORD),
 		):
-			print(f"CREATE ROLE {user} PASSWORD '{password}';", file=f)
+			print(f"CREATE ROLE {user} LOGIN PASSWORD '{password}';", file=f)
 
 		print(
 			f"""

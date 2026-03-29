@@ -37,15 +37,18 @@ def get_booking_details(customer_id: str, booking_id: int, current_user: Authent
 
     res = query_db_from_sql_file(
         "queries/booking_details.sql",
-        {"ref_id": booking_id, "customer_id": customer_id},
+        {"ref_id": booking_id},
         user=WS_CUSTOMER_USER,
         password=WEBSERVER_CUSTOMER_USER_PASSWORD,
     )
 
     if len(res) == 0:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Booking not found")
-    
+
     booking = Booking(**res[0])
+
+    if booking.customer_id != customer_id:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Booking not found")
 
     return booking
 
