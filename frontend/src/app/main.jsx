@@ -5,14 +5,17 @@ import './index.css'
 import App from './App.jsx'
 import { StyledEngineProvider } from '@mui/material/styles'
 import { GlobalStyles } from '@mui/system'
+import { AuthProvider } from '../context/auth_context.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <StyledEngineProvider enableCssLayer>
       <GlobalStyles styles="@layer theme, base, mui, components, utilities;" />
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+      <AuthProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </AuthProvider>
     </StyledEngineProvider>
   </StrictMode>,
 )
