@@ -51,7 +51,7 @@ const CurrentBooking = ({
       <button
         type="button"
         onClick={onRent}
-        className="rounded-lg bg-gradient-to-r from-primary to-blue-900 px-5 py-3 text-sm font-semibold text-white shadow-md shadow-muted"
+        className="cursor-pointer rounded-lg bg-gradient-to-r from-primary to-blue-900 px-5 py-3 text-sm font-semibold text-white shadow-md shadow-muted"
       >
         Rent Room
       </button>

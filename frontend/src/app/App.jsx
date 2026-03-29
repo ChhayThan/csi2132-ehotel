@@ -22,7 +22,7 @@ function App() {
   const [currency, setCurrency] = useState("CAD");
 
   // routes where navbar shouldn't show
-  const hideNavbarRoutes = ["/login", "/employee/login", "/register"];
+  const hideNavbarRoutes = ["/login", "/employee/login", "/employee/dashboard", "/register"];
   const showNavbar = !hideNavbarRoutes.includes(location.pathname);
 
   return (
