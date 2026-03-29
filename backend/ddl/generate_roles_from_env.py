@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from constants import (
+from app.constants import (
 	WEBSERVER_ADMIN_USER_PASSWORD,
 	WEBSERVER_CUSTOMER_USER_PASSWORD,
 	WEBSERVER_EMPLOYEE_USER_PASSWORD,
