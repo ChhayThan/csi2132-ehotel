@@ -1,7 +1,9 @@
 from datetime import date
-from typing import Optional, Union
+from typing import Any, Optional, Union
 
 from fastapi import APIRouter, Depends, HTTPException, status
+
+from ..constants import DB_HOST, DB_PORT, WEBSERVER_AUTH_USER_PASSWORD, WS_AUTH_USER
 
 from ..auth import create_access_token, get_current_user, hash_password, verify_password
 from ..session import query_db_from_sql_file
@@ -25,10 +27,28 @@ def build_token_response(actor_id: str, actor_type: str, role: str, email: Optio
     )
 
 
+def query_db_as_auth_user(
+        file_path: str,
+        params: Any = (),
+        identifiers: tuple | dict = None,
+        host: str = DB_HOST,
+        port: int = DB_PORT
+        ) -> list[dict[str, Any]]:
+    return query_db_from_sql_file(
+        file_path,
+        params,
+        identifiers,
+        host=host,
+        port=port,
+        user=WS_AUTH_USER,
+        password=WEBSERVER_AUTH_USER_PASSWORD,
+	)
+
+
 @router.post("/auth/login", response_model=TokenResponse)
 def login(payload: CustomerLoginRequest) -> TokenResponse:
     # Customers authenticate by email
-    customer = query_db_from_sql_file(
+    customer = query_db_as_auth_user(
         "queries/auth/get_customer_by_email.sql",
         {"email": payload.email.strip()},
     )
@@ -53,13 +73,13 @@ def register(payload: CustomerRegisterRequest) -> TokenResponse:
     email = payload.email.strip()
 
     # We reject duplicate email and duplicate driver's license before inserting.
-    if len(query_db_from_sql_file("queries/auth/get_customer_by_email.sql", {"email": email})) > 0:
+    if len(query_db_as_auth_user("queries/auth/get_customer_by_email.sql", {"email": email})) > 0:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Email already registered")
 
-    if len(query_db_from_sql_file("queries/auth/get_customer_by_id.sql", {"customer_id": customer_id})) > 0:
+    if len(query_db_as_auth_user("queries/auth/get_customer_by_id.sql", {"customer_id": customer_id})) > 0:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Drivers license already registered")
 
-    customer = query_db_from_sql_file(
+    customer = query_db_as_auth_user(
         "queries/auth/create_customer.sql",
         {
             "customer_id": customer_id,
@@ -84,7 +104,7 @@ def register(payload: CustomerRegisterRequest) -> TokenResponse:
 def get_current_actor(current_user: AuthenticatedUser = Depends(get_current_user)) -> Union[CurrentCustomerResponse, CurrentEmployeeResponse]:
     # Hydrate the authenticated principal into the correct frontend-facing actor shape.
     if current_user.actor_type == "customer":
-        customer = query_db_from_sql_file(
+        customer = query_db_as_auth_user(
             "queries/auth/get_customer_by_id.sql",
             {"customer_id": current_user.actor_id},
         )
@@ -106,7 +126,7 @@ def get_current_actor(current_user: AuthenticatedUser = Depends(get_current_user
         )
 
     if current_user.actor_type == "employee":
-        employee = query_db_from_sql_file(
+        employee = query_db_as_auth_user(
             "queries/auth/get_employee_by_id.sql",
             {"employee_id": int(current_user.actor_id)},
         )
@@ -137,7 +157,7 @@ def get_current_actor(current_user: AuthenticatedUser = Depends(get_current_user
 
 @router.post("/employee/login", response_model=TokenResponse)
 def employee_login(payload: EmployeeLoginRequest) -> TokenResponse:
-    employee = query_db_from_sql_file(
+    employee = query_db_as_auth_user(
         "queries/auth/get_employee_for_login.sql",
         {"employee_id": payload.employee_id},
     )

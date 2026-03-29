@@ -4,6 +4,9 @@ from typing import Literal
 from pydantic import BaseModel
 
 
+PaymentType = Literal["debit", "credit", "cash", "cheque", "gift card", "other"]
+
+
 class Address(BaseModel):
 	city: str
 	street_address: str
@@ -83,17 +86,23 @@ class Booking(BookingUserDefined):
     creation_date: date
 
 
+class RentingFromBookingRequest(BaseModel):
+    booking_id: int
+    payment_type: PaymentType
+    payment_amount: float
+
+
 class RentingUserDefined(BaseModel):
     hid: int
     room_number: int
     customer_id: str
     checkin_date: date
     checkout_date: date
-    payment_type: str
+    payment_type: PaymentType
     payment_amount: float
 
 
-class Renting(BaseModel):
+class Renting(RentingUserDefined):
     ref_id: int
     employee_id: int
     creation_date: date
@@ -121,12 +130,12 @@ class Employee(BaseModel):
     id: int
     first_name: str
     last_name: str
-    role: Literal["employee", "admin"]
+    role: Literal["regular", "admin"]
     address: str
 
 
 class EmployeePartial(BaseModel):
     first_name: str | None = None
     last_name: str | None = None
-    role: Literal["employee", "admin"] | None = None
+    role: Literal["regular", "admin"] | None = None
     address: str | None = None

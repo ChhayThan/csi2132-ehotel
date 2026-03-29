@@ -16,7 +16,7 @@ class EmployeeCreationRequest(BaseModel):
     password: str = Field(min_length=8, max_length=72)
     first_name: str = Field(min_length=1)
     last_name: str = Field(min_length=1)
-    role: Literal["employee", "admin"]
+    role: Literal["regular", "admin"]
     address: str = Field(min_length=1)
 
 

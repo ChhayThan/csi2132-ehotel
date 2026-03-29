@@ -1,13 +1,13 @@
 from datetime import date
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from psycopg2.errors import IntegrityError
+from psycopg2.errors import ForeignKeyViolation, IntegrityError
 
 from ..constants import WEBSERVER_EMPLOYEE_USER_PASSWORD, WS_EMPLOYEE_USER
 
 from ..auth import require_employee
 from ..models.auth_models import AuthenticatedUser
-from ..models.data_models import Booking, Renting, RentingUserDefined
+from ..models.data_models import Booking, PaymentType, Renting, RentingFromBookingRequest, RentingUserDefined
 from ..session import query_db_from_sql_file
 
 
@@ -39,10 +39,10 @@ def get_hotel_rentings(hotel_id: int, archived: bool) -> list[Renting]:
 
 
 @router.post("/rentings/convert", status_code=status.HTTP_201_CREATED)
-def create_renting_from_booking(booking_id: int, payment_type: str, payment_amount: float, employee: AuthenticatedUser = Depends(require_employee)) -> int:
+def create_renting_from_booking(payload: RentingFromBookingRequest, employee: AuthenticatedUser = Depends(require_employee)) -> int:
     res = query_db_from_sql_file(
         "queries/booking_details.sql",
-        {"ref_id": booking_id},
+        {"ref_id": payload.booking_id},
         user=WS_EMPLOYEE_USER,
         password=WEBSERVER_EMPLOYEE_USER_PASSWORD,
 	)
@@ -50,7 +50,7 @@ def create_renting_from_booking(booking_id: int, payment_type: str, payment_amou
     if len(res) == 0:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Booking not found")
     
-    booking = Booking(**res)
+    booking = Booking(**res[0])
 
     try:
         res = query_db_from_sql_file(
@@ -63,13 +63,13 @@ def create_renting_from_booking(booking_id: int, payment_type: str, payment_amou
                 "creation_date": date.today(),
                 "checkin_date": booking.checkin_date,
                 "checkout_date": booking.checkout_date,
-                "payment_type": payment_type,
-                "payment_amount": payment_amount,
+                "payment_type": payload.payment_type,
+                "payment_amount": payload.payment_amount,
             },
             user=WS_EMPLOYEE_USER,
             password=WEBSERVER_EMPLOYEE_USER_PASSWORD,
         )
-    except IntegrityError:
+    except IntegrityError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid payment information")
 
     return res[0]["ref_id"]
@@ -94,6 +94,8 @@ def create_renting(renting: RentingUserDefined, employee: AuthenticatedUser = De
             user=WS_EMPLOYEE_USER,
             password=WEBSERVER_EMPLOYEE_USER_PASSWORD,
         )
+    except ForeignKeyViolation:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Hotel, room, or customer not found")
     except IntegrityError:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid payment information")
 
@@ -103,7 +105,7 @@ def create_renting(renting: RentingUserDefined, employee: AuthenticatedUser = De
 @router.delete("/rentings/{renting_id}/delete")
 def delete_renting(renting_id: int) -> Renting:
     res = query_db_from_sql_file(
-        "queries/booking_details.sql",
+        "queries/renting_details.sql",
         {"ref_id": renting_id},
         user=WS_EMPLOYEE_USER,
         password=WEBSERVER_EMPLOYEE_USER_PASSWORD,
@@ -111,6 +113,8 @@ def delete_renting(renting_id: int) -> Renting:
 
     if len(res) == 0:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Renting not found")
+    
+    renting = Renting(ref_id=renting_id, **res[0])
 
     query_db_from_sql_file(
         "queries/modify/delete_renting.sql",
@@ -119,4 +123,4 @@ def delete_renting(renting_id: int) -> Renting:
         password=WEBSERVER_EMPLOYEE_USER_PASSWORD,
     )
 
-    return Renting(**res[0])
+    return renting

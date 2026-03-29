@@ -7,5 +7,5 @@ SET
   extendable = %(extendable)s,
   problem = %(problem)s,
   image = %(image)s
-WHERE hid = %(hid)s AND room_number = %(old_room_number)
+WHERE hid = %(hid)s AND room_number = %(old_room_number)s
 RETURNING room_number;

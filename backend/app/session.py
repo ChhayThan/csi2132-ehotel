@@ -50,7 +50,7 @@ def execute_multiple_from_sql_files(
     
     queries = {}
 
-    for name, request in statements:
+    for name, request in statements.items():
         file_path, params, identifiers = request
         with open(BASE_DIR / file_path, "r") as f:
             query = f.read()
@@ -87,6 +87,10 @@ def query_db(
         # multiple requests in one with block bound and executed as single transaction
         for name, request in statements.items():
             query, params = request
+
+            if isinstance(query, sql.Composable):
+                query = query.as_string(conn)
+                
             df = pd.read_sql_query(query, conn, params=params)
             res[name] = df.to_dict(orient="records")
 
