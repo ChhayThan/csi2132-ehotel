@@ -41,6 +41,7 @@ function ViewRoomPage() {
               checkout_date="Sunday, March 15, 2026"
               num_guests={2}
               estimated_total={room.price * 2}
+              continue_href={`/rooms/${room.id}/booking`}
             />
           </div>
         </section>

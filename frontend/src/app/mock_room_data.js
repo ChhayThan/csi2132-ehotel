@@ -19,6 +19,16 @@ export const mockHotel = {
   contactPhone: "123-456-7890",
 };
 
+export const mockBooking = {
+  checkinDate: "Thursday, March 12, 2026",
+  checkoutDate: "Sunday, March 15, 2026",
+  guests: 2,
+  nights: 2,
+  taxes: 77.74,
+  bookedDate: "March 1, 2026",
+  stayDates: "March 12 - March 15, 2026 (3 days)",
+};
+
 export const mockRooms = [
   {
     id: "123",
@@ -92,5 +102,60 @@ export const mockRooms = [
     ],
     problemMessage: "",
     extendable: false,
+  },
+];
+
+export const mockBookings = [
+  {
+    id: "bk-123",
+    roomId: "123",
+    hotelName: mockHotel.name,
+    chainName: mockHotel.chainName,
+    city: mockHotel.city,
+    address: mockHotel.address,
+    bookedDate: "Mar 4, 2026",
+    stayLabel: "Mar 12 - Mar 15, 2026",
+    confirmationNumber: "K212507-43435431",
+    status: "Confirmed",
+    current: true,
+  },
+  {
+    id: "bk-1031",
+    roomId: "1031",
+    hotelName: mockHotel.name,
+    chainName: mockHotel.chainName,
+    city: mockHotel.city,
+    address: mockHotel.address,
+    bookedDate: "Jan 10, 2026",
+    stayLabel: "Feb 3 - Feb 6, 2026",
+    confirmationNumber: "K101942-78213514",
+    status: "Completed",
+    current: false,
+  },
+  {
+    id: "bk-1281",
+    roomId: "1281",
+    hotelName: mockHotel.name,
+    chainName: mockHotel.chainName,
+    city: mockHotel.city,
+    address: mockHotel.address,
+    bookedDate: "Dec 14, 2025",
+    stayLabel: "Jan 2 - Jan 4, 2026",
+    confirmationNumber: "K998123-15084573",
+    status: "Completed",
+    current: false,
+  },
+  {
+    id: "bk-1281b",
+    roomId: "1281",
+    hotelName: mockHotel.name,
+    chainName: mockHotel.chainName,
+    city: mockHotel.city,
+    address: mockHotel.address,
+    bookedDate: "Nov 20, 2025",
+    stayLabel: "Nov 28 - Dec 1, 2025",
+    confirmationNumber: "K888721-44120576",
+    status: "Completed",
+    current: false,
   },
 ];
