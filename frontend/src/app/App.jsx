@@ -22,7 +22,13 @@ function App() {
   const [currency, setCurrency] = useState("CAD");
 
   // routes where navbar shouldn't show
-  const hideNavbarRoutes = ["/login", "/employee/login", "/employee/dashboard", "/register"];
+  const hideNavbarRoutes = [
+    "/login",
+    "/employee/login",
+    "/employee/dashboard",
+    "/admin/manage-database",
+    "/register",
+  ];
   const showNavbar = !hideNavbarRoutes.includes(location.pathname);
 
   return (
@@ -30,6 +36,7 @@ function App() {
       {showNavbar && (<Navbar user_type={userType} user_name={name} currency={currency} setCurrency={setCurrency}/>)}
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/admin/manage-database" element={<AdminManageDatabasePage />} />
         <Route path="/bookings" element={<BookingsPage />} />
         <Route path="/bookings/:bookingId" element={<ViewBookingPage />} />
         <Route path="/hotels/:hotelId/rooms" element={<HotelRoomListPage />} />

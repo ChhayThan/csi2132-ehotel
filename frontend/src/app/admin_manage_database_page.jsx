@@ -282,7 +282,7 @@ function AdminManageDatabasePage() {
 
   return (
     <div className="min-h-screen">
-      <div className="min-h-[calc(100vh-2rem)] bg-[#f4f7fb] shadow-[0_25px_60px_rgba(0,0,0,0.28)]">
+      <div className="min-h-screen bg-[#f4f7fb] shadow-[0_25px_60px_rgba(0,0,0,0.28)]">
         <Navbar user_type="Admin" user_name="Eric Chhour" currency="CAD" setCurrency={() => {}} />
 
         <main className="px-4 pb-12 pt-28 sm:px-6 lg:px-10">
