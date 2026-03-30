@@ -62,7 +62,12 @@ const BookingSummaryCard = ({
     </div>
 
     {showAction ? (
-      <button onClick={(() => onAction ? onAction() : handleBookingCancel())} className="bg-gradient-to-r from-red-700 to-red-900 text-white font-medium py-3 mt-2 rounded-lg text-sm cursor-pointer shadow-md shadow-muted"> {action_label} </button>
+      <button
+        onClick={() => (onAction ? onAction() : handleBookingCancel())}
+        className="bg-gradient-to-r from-red-700 to-red-900 text-white font-medium py-3 mt-2 rounded-lg text-sm cursor-pointer shadow-md shadow-muted"
+      >
+        {action_label}
+      </button>
     ) : null}
   </div>
 };

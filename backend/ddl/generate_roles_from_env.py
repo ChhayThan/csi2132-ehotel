@@ -1,4 +1,9 @@
+import sys
 from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+	sys.path.insert(0, str(PROJECT_ROOT))
 
 from app.constants import (
 	WEBSERVER_ADMIN_USER_PASSWORD,
@@ -31,10 +36,10 @@ if __name__ == '__main__':
 			f"""
 GRANT SELECT ON hotel_chain, hotel_chain_email, hotel, hotel_email, room, room_amenity, hotel_capacity, hotel_chain_detailed, hotel_detailed, rooms_by_city TO {WS_USER};
 GRANT EXECUTE ON FUNCTION available_rooms TO {WS_USER};
-GRANT INSERT, DELETE ON booking TO {WS_CUSTOMER_USER};
+GRANT SELECT, INSERT, DELETE ON booking TO {WS_CUSTOMER_USER};
 GRANT USAGE ON booking_ref_id_seq TO {WS_CUSTOMER_USER};
 GRANT SELECT ON booking_archive TO {WS_CUSTOMER_USER};
-GRANT SELECT ON booking_archive, renting_archive TO {WS_EMPLOYEE_USER};
+GRANT SELECT ON booking, renting, booking_archive, renting_archive TO {WS_EMPLOYEE_USER};
 GRANT DELETE ON booking, renting TO {WS_EMPLOYEE_USER};
 GRANT INSERT ON renting, booking_archive, renting_archive TO {WS_EMPLOYEE_USER};
 GRANT USAGE ON renting_ref_id_seq TO {WS_EMPLOYEE_USER};
