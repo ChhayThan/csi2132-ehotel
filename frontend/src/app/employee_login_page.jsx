@@ -1,15 +1,46 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logoWhite from "../assets/logo_white.svg";
+import { ApiError } from "../lib/api";
+import { useAuth } from "../context/auth_context";
 
 function EmployeeLoginPage() {
   const navigate = useNavigate();
+  const { loginEmployee } = useAuth();
   const [employeeId, setEmployeeId] = useState("");
   const [password, setPassword] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    navigate("/employee/dashboard");
+
+    const parsedEmployeeId = Number(employeeId.trim());
+
+    if (!Number.isInteger(parsedEmployeeId)) {
+      setErrorMessage("Please enter a valid employee ID.");
+      return;
+    }
+
+    setErrorMessage("");
+
+    try {
+      setIsSubmitting(true);
+      const { user } = await loginEmployee({
+        employee_id: parsedEmployeeId,
+        password,
+      });
+
+      navigate(user.role === "admin" ? "/admin/manage-database" : "/employee/dashboard");
+    } catch (error) {
+      if (error instanceof ApiError) {
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage("Something went wrong. Please try again.");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const canSubmit = employeeId.trim() !== "" && password.trim() !== "";
@@ -48,16 +79,17 @@ function EmployeeLoginPage() {
                 placeholder="Password"
                 className="rounded-xl border border-black/12 px-4 py-3 text-sm outline-none transition focus:border-primary"
               />
+              {errorMessage ? <p className="text-sm text-red-600">{errorMessage}</p> : null}
               <button
                 type="submit"
-                disabled={!canSubmit}
+                disabled={!canSubmit || isSubmitting}
                 className={`mt-2 rounded-lg py-3 text-sm font-semibold shadow-md ${
-                  canSubmit
+                  canSubmit && !isSubmitting
                     ? "bg-gradient-to-r from-primary to-blue-900 text-white"
                     : "bg-slate-200 text-slate-400"
                 }`}
               >
-                Login
+                {isSubmitting ? "Logging in..." : "Login"}
               </button>
             </form>
 
