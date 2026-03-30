@@ -28,8 +28,15 @@ Database:
 - `DB_PORT` default: `5432`
 - `DB_USER` default: `public`
 - `DB_PASSWORD` default: empty string
+- `DB_WS_USER_PASSWORD` default: `DB_PASSWORD`
+- `DB_WS_CUSTOMER_PASSWORD` default: `DB_WS_USER_PASSWORD`
+- `DB_WS_EMPLOYEE_PASSWORD` default: `DB_WS_USER_PASSWORD`
+- `DB_WS_ADMIN_PASSWORD`  default: `DB_WS_EMPLOYEE_PASSWORD`
+- `DB_WS_AUTH_PASSWORD` default: `DB_WS_USER_PASSWORD`
 
-If the `DB_*` variables are not set, it uses the defaults above
+If the `DB_*` variables are not set, it uses the defaults above. 
+Depending on the request, the webserver uses one of the webserver roles in the database. 
+The password inheritance is inherited as described if any passwords are unspecified.
 
 Example local setup:
 
