@@ -1,7 +1,7 @@
 from datetime import date
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from psycopg2.errors import ForeignKeyViolation, IntegrityError
+from psycopg2.errors import ForeignKeyViolation, IntegrityError, UniqueViolation
 
 from ..constants import WEBSERVER_EMPLOYEE_USER_PASSWORD, WS_EMPLOYEE_USER
 
@@ -69,7 +69,11 @@ def create_renting_from_booking(payload: RentingFromBookingRequest, employee: Au
             user=WS_EMPLOYEE_USER,
             password=WEBSERVER_EMPLOYEE_USER_PASSWORD,
         )
+    except UniqueViolation as e:
+        print(e)
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Conflicting booking or renting for dates")
     except IntegrityError as e:
+        print(e)
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid payment information")
 
     return res[0]["ref_id"]
@@ -94,9 +98,14 @@ def create_renting(renting: RentingUserDefined, employee: AuthenticatedUser = De
             user=WS_EMPLOYEE_USER,
             password=WEBSERVER_EMPLOYEE_USER_PASSWORD,
         )
-    except ForeignKeyViolation:
+    except ForeignKeyViolation as e:
+        print(e)
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Hotel, room, or customer not found")
-    except IntegrityError:
+    except UniqueViolation as e:
+        print(e)
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Conflicting booking or renting for dates")
+    except IntegrityError as e:
+        print(e)
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid payment information")
 
     return res[0]["ref_id"]

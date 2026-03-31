@@ -140,19 +140,44 @@ curl -X GET \
 
 ### CREATE
 
-Payment amount not currently validated but should be checked that payment amount = rental period * room price with trigger.
-
 From booking:
+curl -X POST \
+  'http://127.0.0.1:8000/employee/rentings/convert' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -H "Authorization: $EMPLOYEE_TOKEN" \
+  -d '{"booking_id": 2, "payment_type": "debit", "payment_amount": 3000}'
+```
+
+From booking (returns 400 for invalid payment information):
 ```bash
 curl -X POST \
   'http://127.0.0.1:8000/employee/rentings/convert' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -H "Authorization: $EMPLOYEE_TOKEN" \
-  -d '{"booking_id": 7, "payment_type": "debit", "payment_amount": 400}'
+  -d '{"booking_id": 2, "payment_type": "debit", "payment_amount": 400}'
 ```
 
 New renting without booking:
+```bash
+curl -X POST \
+  'http://127.0.0.1:8000/employee/rentings/new' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -H "Authorization: $EMPLOYEE_TOKEN" \
+  -d '{
+    "hid": 1,
+    "room_number": 102,
+    "customer_id": "DL1000001",
+    "checkin_date": "2026-03-30",
+    "checkout_date": "2026-03-31",
+    "payment_type": "debit",
+    "payment_amount": 250
+  }'
+```
+
+New renting without booking (returns 400: Booking or renting conflict):
 ```bash
 curl -X POST \
   'http://127.0.0.1:8000/employee/rentings/new' \
@@ -166,7 +191,7 @@ curl -X POST \
     "checkin_date": "2026-03-30",
     "checkout_date": "2026-03-31",
     "payment_type": "debit",
-    "payment_amount": 0
+    "payment_amount": 150
   }'
 ```
 
