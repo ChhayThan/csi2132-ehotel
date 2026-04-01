@@ -1,10 +1,13 @@
 import os
 import csv
+from pathlib import Path
 
 if __name__ == '__main__':
-    with open("load_mock_data.sql", "w") as write_file:
+    base_dir = Path(__file__).resolve().parent
 
-        files = os.listdir(".")
+    with open(base_dir / "load_mock_data.sql", "w") as write_file:
+
+        files = os.listdir(base_dir)
 
         for filename in [
             "hotel_chain.csv",
@@ -21,7 +24,7 @@ if __name__ == '__main__':
             "renting_archive.csv"
         ]:
             if filename in files:
-                with open(filename, "r") as f:
+                with open(base_dir / filename, "r") as f:
                     data = csv.reader(f)
                     values = []
                     for row in data:

@@ -44,6 +44,7 @@ class Hotel(HotelUserDefined):
     chain_name: str
     min_price: float | None = None
     num_available_rooms: int | None = None
+    total_capacity: int | None = None
     manager_eid: int | None = None
 
 
