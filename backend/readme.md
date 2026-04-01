@@ -52,3 +52,30 @@ fastapi dev --entrypoint api:app
 ```
 
 View docs at `http://127.0.0.1:8000/docs`
+
+## Setting up the Database
+
+As a user with sufficient permissions:  
+
+Install postgres and create the database
+```bash
+createdb $DB_NAME
+```
+
+Run the setup python scripts (assuming cwd is the project root)
+```bash
+cd backend
+
+python ddl/generate_roles_from_env.py
+python mock_data/populate_tables.py
+```
+
+Run the ddl files in order  
+1. create_types.sql
+1. create_tables.sql
+1. all files under backend/views/
+1. init_roles.sql
+1. all files under backend/functions/
+1. all files under backend/triggers/
+
+Run the `load_mock_data.sql` file generated earlier.
