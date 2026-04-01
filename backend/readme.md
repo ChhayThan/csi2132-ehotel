@@ -73,9 +73,9 @@ python mock_data/populate_tables.py
 Run the ddl files in order  
 1. create_types.sql
 1. create_tables.sql
+1. all files under backend/functions/
 1. all files under backend/views/
 1. init_roles.sql
-1. all files under backend/functions/
 1. all files under backend/triggers/
 
 Run the `load_mock_data.sql` file generated earlier.

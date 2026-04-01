@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS employee (
     address TEXT NOT NULL,
     password_hash TEXT NOT NULL,
     role EMPLOYEE_ROLE NOT NULL,
-    hid INTEGER;
+    hid INTEGER
 );
 
 CREATE TABLE IF NOT EXISTS hotel (
@@ -36,7 +36,9 @@ CREATE TABLE IF NOT EXISTS hotel (
     FOREIGN KEY (chain_name) REFERENCES hotel_chain(name) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-ALTER TABLE employee ADD FOREIGN KEY (hid) REFERENCES hotel(hid) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE employee 
+ADD FOREIGN KEY (hid) REFERENCES hotel(hid) 
+DEFERRABLE INITIALLY DEFERRED;
 
 CREATE TABLE IF NOT EXISTS hotel_email (
     hid INTEGER,
@@ -99,7 +101,8 @@ CREATE TABLE IF NOT EXISTS renting (
     checkout_date DATE NOT NULL,
     payment_type VARCHAR(255) NOT NULL,
     payment_amount PRICE NOT NULL,
-    booking_id INTEGER REFERENCES booking_archive(ref_id) DEFERRABLE INITIALLY DEFERRED,
+    booking_id INTEGER,
+    booking_creation_date DATE,
     FOREIGN KEY (hid, room_number) REFERENCES room(hid, room_number) ON DELETE RESTRICT,
     FOREIGN KEY (customer_id) REFERENCES customer(id) ON DELETE CASCADE,
     FOREIGN KEY (employee_id) REFERENCES employee(id) ON DELETE RESTRICT
@@ -116,6 +119,10 @@ CREATE TABLE IF NOT EXISTS booking_archive (
     PRIMARY KEY (ref_id, creation_date)
 );
 
+ALTER TABLE renting 
+ADD FOREIGN KEY (booking_id, booking_creation_date) REFERENCES booking_archive(ref_id, creation_date) 
+DEFERRABLE INITIALLY DEFERRED;
+
 CREATE TABLE IF NOT EXISTS renting_archive (
     ref_id INTEGER,
     hid INTEGER,
@@ -127,6 +134,7 @@ CREATE TABLE IF NOT EXISTS renting_archive (
     payment_type VARCHAR(255) NOT NULL,
     payment_amount PRICE NOT NULL,
     booking_id INTEGER,
-    FOREIGN KEY (booking_id) REFERENCES booking_archive(ref_id),
+    booking_creation_date DATE,
+    FOREIGN KEY (booking_id, booking_creation_date) REFERENCES booking_archive(ref_id, creation_date),
     PRIMARY KEY (ref_id, checkin_date)
 );
