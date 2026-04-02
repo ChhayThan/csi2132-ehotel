@@ -174,12 +174,15 @@ def delete_hotel_chain(chain_name: str) -> HotelChain:
     
     old_chain = HotelChain(**res)
 
-    query_db_from_sql_file(
-        "queries/modify/delete_hotel_chain.sql",
-        {"name": chain_name},
-        user=WS_ADMIN_USER,
-        password=WEBSERVER_ADMIN_USER_PASSWORD,
-    )
+    try:
+        query_db_from_sql_file(
+            "queries/modify/delete_hotel_chain.sql",
+            {"name": chain_name},
+            user=WS_ADMIN_USER,
+            password=WEBSERVER_ADMIN_USER_PASSWORD,
+        )
+    except ForeignKeyViolation:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Hotel chain has registered employees")
 
     return old_chain
 
@@ -343,12 +346,15 @@ def delete_hotel_in_chain(hotel_id: int) -> Hotel:
 
     old_hotel = Hotel(**res)
 
-    query_db_from_sql_file(
-        "queries/modify/delete_hotel.sql",
-        {"hid": hotel_id},
-        user=WS_ADMIN_USER,
-        password=WEBSERVER_ADMIN_USER_PASSWORD,
-    )
+    try:
+        query_db_from_sql_file(
+            "queries/modify/delete_hotel.sql",
+            {"hid": hotel_id},
+            user=WS_ADMIN_USER,
+            password=WEBSERVER_ADMIN_USER_PASSWORD,
+        )
+    except ForeignKeyViolation:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Hotel has registered employees")
 
     return old_hotel
 
@@ -499,13 +505,16 @@ def delete_room_in_hotel(hotel_id: int, room_number: int):
     res = res[0]
     res["amenities"] = parse_pg_array(res.get("amenities"))
     old_room = Room(**res)
-
-    query_db_from_sql_file(
-        "queries/modify/delete_room.sql",
-        {"hid": hotel_id, "room_number": room_number},
-        user=WS_ADMIN_USER,
-        password=WEBSERVER_ADMIN_USER_PASSWORD,
-    )
+    
+    try:
+        query_db_from_sql_file(
+            "queries/modify/delete_room.sql",
+            {"hid": hotel_id, "room_number": room_number},
+            user=WS_ADMIN_USER,
+            password=WEBSERVER_ADMIN_USER_PASSWORD,
+        )
+    except ForeignKeyViolation:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Room has existing bookings and/or rentings")
 
     return old_room
 
@@ -593,12 +602,15 @@ def delete_employee_in_hotel(employee_id: int) -> Employee:
     
     old_employee = Employee(**res[0])
 
-    query_db_from_sql_file(
-        "queries/modify/delete_employee.sql",
-        {"eid": employee_id},
-        user=WS_ADMIN_USER,
-        password=WEBSERVER_ADMIN_USER_PASSWORD,
-    )
+    try:
+        query_db_from_sql_file(
+            "queries/modify/delete_employee.sql",
+            {"eid": employee_id},
+            user=WS_ADMIN_USER,
+            password=WEBSERVER_ADMIN_USER_PASSWORD,
+        )
+    except ForeignKeyViolation:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="A new manager must be assigned for hotel before deleting a manager")
 
     return old_employee
 
