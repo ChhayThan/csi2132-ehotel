@@ -78,4 +78,6 @@ Run the ddl files in order
 1. init_roles.sql
 1. all files under backend/triggers/
 
-Run the `load_mock_data.sql` file generated earlier.
+Initial data
+1. Run the `load_mock_data.sql` file under `backend/mock_data` generated earlier.
+1. Run alter_sequences.sql
