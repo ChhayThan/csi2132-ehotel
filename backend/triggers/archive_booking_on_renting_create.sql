@@ -3,18 +3,6 @@ $$
     BEGIN
 
         IF NEW.booking_id IS NOT NULL THEN
-            WITH deleted_rows AS (
-                DELETE FROM booking WHERE ref_id = NEW.booking_id
-                RETURNING (
-                    ref_id,
-                    hid,
-                    room_number,
-                    customer_id,
-                    creation_date,
-                    checkin_date,
-                    checkout_date
-                )
-            )
             INSERT INTO booking_archive (
                 ref_id,
                 hid,
@@ -24,7 +12,17 @@ $$
                 checkin_date,
                 checkout_date
             )
-            SELECT * FROM deleted_rows;
+            SELECT
+                ref_id,
+                hid,
+                room_number,
+                customer_id,
+                creation_date,
+                checkin_date,
+                checkout_date
+            FROM booking WHERE ref_id = NEW.booking_id;
+
+            DELETE FROM booking WHERE ref_id = NEW.booking_id;
         END IF;
 
         RETURN NULL;

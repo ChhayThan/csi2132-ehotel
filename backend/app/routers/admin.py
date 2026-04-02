@@ -227,7 +227,7 @@ def create_hotel_in_chain(chain_name: str, hotel: HotelUserDefined) -> int:
         )
     except ForeignKeyViolation:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Hotel chain not found")
-    except IntegrityError as e:
+    except IntegrityError:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid hotel details")
     
     hid = res[0]["hid"]
@@ -258,7 +258,7 @@ def create_hotel_in_chain(chain_name: str, hotel: HotelUserDefined) -> int:
 @router.put("/hotels/{hotel_id}/manage")
 def edit_hotel_in_chain(hotel_id: int, new_hotel: HotelPartial) -> int:
     res = query_db_from_sql_file(
-        "queries/hotel_details.sql",
+        "queries/hotel_details_full.sql",
         {"hid": hotel_id},
         user=WS_ADMIN_USER,
         password=WEBSERVER_ADMIN_USER_PASSWORD,
@@ -315,6 +315,7 @@ def edit_hotel_in_chain(hotel_id: int, new_hotel: HotelPartial) -> int:
     except UniqueViolation:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Uniqueness violation")
     except IntegrityError as e:
+        print(e)
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid hotel details")
     
     return res["update_hotel"][0].get("hid")
@@ -323,7 +324,7 @@ def edit_hotel_in_chain(hotel_id: int, new_hotel: HotelPartial) -> int:
 @router.delete("/hotels/{hotel_id}/delete")
 def delete_hotel_in_chain(hotel_id: int) -> Hotel:
     res = query_db_from_sql_file(
-        "queries/hotel_details.sql",
+        "queries/hotel_details_full.sql",
         {"hid": hotel_id},
         user=WS_ADMIN_USER,
         password=WEBSERVER_ADMIN_USER_PASSWORD,
