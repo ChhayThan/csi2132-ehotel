@@ -26,7 +26,7 @@ Database:
 - `DB_NAME` default: `ehoteldb`
 - `DB_HOST` default: `localhost`
 - `DB_PORT` default: `5432`
-- `DB_USER` default: `public`
+- `DB_USER` default: `postgres`
 - `DB_PASSWORD` default: empty string
 - `DB_WS_USER_PASSWORD` default: `DB_PASSWORD`
 - `DB_WS_CUSTOMER_PASSWORD` default: `DB_WS_USER_PASSWORD`
