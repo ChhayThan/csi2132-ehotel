@@ -16,6 +16,7 @@ import AuthGuard from "../components/auth_guard.jsx";
 import { useAuth } from "../context/auth_context.jsx";
 import ViewBookingPage from "./view_booking_page";
 import ViewRoomPage from "./view_room_page";
+import Footer from "../components/footer.tsx";
 
 function App() {
   const location = useLocation();
@@ -43,9 +44,10 @@ function App() {
     "/register",
   ];
   const showNavbar = !hideNavbarRoutes.includes(location.pathname);
+  const showFooter = showNavbar;
 
   return (
-    <div className={`flex flex-col ${showNavbar ? "pt-18" : ""}`}>
+    <div className={`flex min-h-screen flex-col ${showNavbar ? "pt-18" : ""}`}>
       {showNavbar && (
         <Navbar
           user_type={userType}
@@ -138,6 +140,7 @@ function App() {
         <Route path="/preview/components" element={<ComponentPreviewPage />} />
         <Route path="/preview/confirm-booking" element={<ConfirmBookingPage />} />
       </Routes>
+      {showFooter && <Footer userType={userType} />}
     </div>
   );
 }

@@ -411,7 +411,7 @@ function Home() {
       </div>
 
       {/* main search section */}
-      <div ref={searchSecRef} className="max-w-6xl w-full px-5 mx-auto flex flex-col gap-5">
+      <div id="browse" ref={searchSecRef} className="max-w-6xl w-full px-5 mx-auto flex flex-col gap-5">
         <p className="text-3xl w-full">Search through our hotels.</p>
         <div className="bg-white rounded-xl p-7 shadow-lg w-full">
           <form onSubmit={handleHotelSearch} className="flex flex-col md:flex-row gap-3 md:gap-5 w-full">
@@ -578,7 +578,7 @@ function Home() {
       </div>
 
 
-      <div className="max-w-6xl w-full mx-auto px-5 flex flex-col gap-5">
+      <div id="city-room-counts" className="max-w-6xl w-full mx-auto px-5 flex flex-col gap-5">
         <div className="flex flex-col gap-2">
           <p className="text-3xl">Available rooms by city.</p>
           <p className="text-sm text-slate-500">A quick look at today&apos;s room inventory across our cities.</p>
@@ -609,7 +609,6 @@ function Home() {
           ))}
         </div>
       </div>
-      
     </div>
 
   );
