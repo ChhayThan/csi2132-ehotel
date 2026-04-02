@@ -12,7 +12,7 @@ import {
   getHotelDetails,
   getRoomDetails,
 } from "../lib/protected_api";
-import { mockHotel, mockRooms } from "./mock_room_data";
+import { fallbackRoomImage, getRoomSubtitle, getRoomType } from "../lib/booking_flow_utils";
 
 const fullDateFormatter = new Intl.DateTimeFormat("en-US", {
   month: "long",
@@ -40,18 +40,6 @@ function calculateNights(checkinDate, checkoutDate) {
   );
 }
 
-function fallbackRoomImage(roomNumber) {
-  return mockRooms[roomNumber % mockRooms.length]?.image ?? mockRooms[0]?.image ?? "";
-}
-
-function getRoomSubtitle(capacity) {
-  return `${capacity === 4 ? "Suite" : capacity === 2 ? "Double" : "Single"} (fits ${capacity} guest${capacity > 1 ? "s" : ""})`;
-}
-
-function getRoomType(capacity) {
-  return capacity === 4 ? "Suite" : capacity === 2 ? "Double" : "Single";
-}
-
 function hasFullBookingDetail(detail) {
   return Boolean(
     detail &&
@@ -77,7 +65,7 @@ async function buildBookingDetail(rawBooking, isArchived) {
     roomNumber: room.room_number,
     roomType: getRoomType(room.capacity),
     roomSubtitle: getRoomSubtitle(room.capacity),
-    roomImage: room.image || fallbackRoomImage(room.room_number),
+    roomImage: room.image || fallbackRoomImage(),
     address: `${hotel.address.city} - ${hotel.address.street_address}`,
     bookedDate: formatDate(rawBooking.creation_date),
     stayLabel: formatStayLabel(rawBooking.checkin_date, rawBooking.checkout_date),
@@ -166,14 +154,14 @@ function ViewBookingPage() {
 
   const ratingValue = useMemo(() => {
     if (!bookingData) {
-      return mockHotel.rating;
+      return 0;
     }
 
-    return bookingData.hotel.rating ?? mockHotel.rating;
+    return Number(bookingData.hotel.rating ?? 0);
   }, [bookingData]);
 
   const reviewCount = useMemo(() => {
-    return bookingData ? 0 : mockHotel.reviewCount;
+    return 0;
   }, [bookingData]);
 
   const amenities = bookingData?.amenities ?? [];

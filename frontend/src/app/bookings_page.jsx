@@ -6,7 +6,7 @@ import {
   getHotelDetails,
   getRoomDetails,
 } from "../lib/protected_api";
-import { mockRooms } from "./mock_room_data";
+import { fallbackRoomImage } from "../lib/booking_flow_utils";
 
 const shortDateFormatter = new Intl.DateTimeFormat("en-US", {
   month: "short",
@@ -25,10 +25,6 @@ function formatStayLabel(checkinDate, checkoutDate) {
   return `${shortDateFormatter.format(checkin)} - ${shortDateFormatter.format(checkout)}`;
 }
 
-function fallbackRoomImage(roomNumber) {
-  return mockRooms[roomNumber % mockRooms.length]?.image ?? mockRooms[0]?.image ?? "";
-}
-
 async function enrichBooking(booking) {
   const [hotel, room] = await Promise.all([
     getHotelDetails(booking.hid),
@@ -42,7 +38,7 @@ async function enrichBooking(booking) {
     hotelName: hotel.name,
     chainName: hotel.chain_name,
     stayLabel: formatStayLabel(booking.checkin_date, booking.checkout_date),
-    image: room.image || fallbackRoomImage(booking.room_number),
+    image: room.image || fallbackRoomImage(),
     booking,
     hotel,
     room,

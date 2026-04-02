@@ -19,6 +19,14 @@ export function cancelCustomerBooking(customerId, bookingId, token) {
   });
 }
 
+export function createCustomerBooking(customerId, payload, token) {
+  return apiRequest(`/${encodeURIComponent(customerId)}/bookings/new`, {
+    method: "POST",
+    body: payload,
+    token,
+  });
+}
+
 export function getHotelDetails(hotelId) {
   return apiRequest(`/hotels/${hotelId}`);
 }

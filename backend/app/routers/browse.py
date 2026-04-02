@@ -1,3 +1,4 @@
+from typing import Any
 from datetime import date
 
 from fastapi import APIRouter, HTTPException, status
@@ -41,6 +42,30 @@ def get_top_hotels(limit: int = 10) -> list[Hotel]:
         )
 
     return [Hotel(**row) for row in res]
+
+
+@router.get("/num_rooms")
+def get_number_of_rooms_for_city(city: str | None = None) -> int | list[dict[str, Any]]:
+    '''Return the total number of rooms for all hotels in the city 
+    or a list of aggregated room counts for all cities if no city provided'''
+
+    if city:
+        res = query_db_from_sql_file(
+            "queries/num_rooms_for_city.sql",
+            {"city": city},
+        )
+
+        if len(res) == 0:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"No city with name {city}")
+        
+        return res[0]["num_rooms"]
+    
+    else:
+        res = query_db_from_sql_file(
+            "queries/num_rooms_by_city.sql"
+        )
+
+        return res
 
 
 @router.get("/{hotel_id}")
@@ -90,27 +115,3 @@ def get_room_details(hotel_id: int, room_number: int) -> Room:
     res[0]["amenities"] = parse_pg_array(res[0].get("amenities"))
 
     return Room(**res[0])
-
-
-@router.get("/num_rooms")
-def get_number_of_rooms_for_city(city: str | None = None) -> int | list[dict[str, int]]:
-    '''Return the total number of rooms for all hotels in the city 
-    or a list of aggregated room counts for all cities if no city provided'''
-
-    if city:
-        res = query_db_from_sql_file(
-            "queries/num_rooms_for_city.sql",
-            {"city": city},
-        )
-
-        if len(res) == 0:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"No city with name {city}")
-        
-        return res[0]["num_rooms"]
-    
-    else:
-        res = query_db_from_sql_file(
-            "queries/num_rooms_by_city.sql"
-        )
-
-        return res
