@@ -72,7 +72,8 @@ def create_booking(customer_id, new_booking: BookingUserDefined, current_user: A
             user=WS_CUSTOMER_USER,
             password=WEBSERVER_CUSTOMER_USER_PASSWORD,
         )
-    except UniqueViolation:
+    except UniqueViolation as e:
+        print(e)
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Booking conflict")
     except ForeignKeyViolation:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Hotel or room does not exist")

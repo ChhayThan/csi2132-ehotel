@@ -44,6 +44,7 @@ GRANT DELETE ON booking, renting TO {WS_EMPLOYEE_USER};
 GRANT INSERT ON renting, booking_archive, renting_archive TO {WS_EMPLOYEE_USER};
 GRANT USAGE ON renting_ref_id_seq TO {WS_EMPLOYEE_USER};
 GRANT UPDATE ON renting TO {WS_EMPLOYEE_USER};
+GRANT EXECUTE ON FUNCTION num_conflicts TO {WS_CUSTOMER_USER}, {WS_EMPLOYEE_USER};
 GRANT SELECT, INSERT, UPDATE, DELETE ON hotel_chain, hotel_chain_email, employee, hotel, hotel_email, room, room_amenity TO {WS_ADMIN_USER};
 GRANT USAGE ON employee_id_seq, hotel_hid_seq TO {WS_ADMIN_USER};
 GRANT SELECT ON customer, employee TO {WS_AUTH_USER};

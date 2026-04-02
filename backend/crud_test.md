@@ -59,7 +59,7 @@ curl -X GET \
 Booking details:
 ```bash
 curl -X GET \
-  'http://127.0.0.1:8000/DL100001/bookings/1' \
+  'http://127.0.0.1:8000/DL1000001/bookings/1' \
   -H 'accept: application/json' \
   -H "Authorization: $CUSTOMER_TOKEN"
 ```
@@ -80,7 +80,7 @@ Overlapping booking (should reject once trigger implemented):
 curl -X POST \
   'http://127.0.0.1:8000/DL1000001/bookings/new' \
   -H "Content-Type: application/json" \
-  -H "Authorization: $CUSTOMER_TOKEN" \ 
+  -H "Authorization: $CUSTOMER_TOKEN" \
   -d '{"hid": 5, "room_number": 503, "checkin_date": "2026-05-21", "checkout_date": "2026-05-26"}'
 ```
 
@@ -89,7 +89,7 @@ Non-existent hotel or room (returns 404):
 curl -X POST \
   'http://127.0.0.1:8000/DL1000001/bookings/new' \
   -H "Content-Type: application/json" \
-  -H "Authorization: $CUSTOMER_TOKEN" \ 
+  -H "Authorization: $CUSTOMER_TOKEN" \
   -d '{"hid": 1, "room_number": 205, "checkin_date": "2026-04-06", "checkout_date": "2026-04-07"}'
 ```
 
@@ -140,16 +140,23 @@ curl -X GET \
 
 ### CREATE
 
-Payment amount not currently validated but should be checked that payment amount = rental period * room price with trigger.
-
 From booking:
+curl -X POST \
+  'http://127.0.0.1:8000/employee/rentings/convert' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -H "Authorization: $EMPLOYEE_TOKEN" \
+  -d '{"booking_id": 2, "payment_type": "debit", "payment_amount": 3000}'
+```
+
+From booking (returns 400 for invalid payment information):
 ```bash
 curl -X POST \
   'http://127.0.0.1:8000/employee/rentings/convert' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -H "Authorization: $EMPLOYEE_TOKEN" \
-  -d '{"booking_id": 7, "payment_type": "debit", "payment_amount": 400}'
+  -d '{"booking_id": 1, "payment_type": "debit", "payment_amount": 400}'
 ```
 
 New renting without booking:
@@ -161,12 +168,30 @@ curl -X POST \
   -H "Authorization: $EMPLOYEE_TOKEN" \
   -d '{
     "hid": 1,
-    "room_number": 101,
+    "room_number": 102,
     "customer_id": "DL1000001",
     "checkin_date": "2026-03-30",
     "checkout_date": "2026-03-31",
     "payment_type": "debit",
-    "payment_amount": 0
+    "payment_amount": 250
+  }'
+```
+
+New renting without booking (returns 400: Booking or renting conflict):
+```bash
+curl -X POST \
+  'http://127.0.0.1:8000/employee/rentings/new' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -H "Authorization: $EMPLOYEE_TOKEN" \
+  -d '{
+    "hid": 1,
+    "room_number": 101,
+    "customer_id": "DL1000001",
+    "checkin_date": "2026-03-30",
+    "checkout_date": "2026-04-02",
+    "payment_type": "debit",
+    "payment_amount": 450
   }'
 ```
 
@@ -193,7 +218,7 @@ curl -X POST \
 Delete renting:
 ```bash
 curl -X DELETE \
-  'http://127.0.0.1:8000/employee/rentings/1/delete'\ 
+  'http://127.0.0.1:8000/employee/rentings/1/delete' \
   -H 'accept: application/json' \
   -H "Authorization: $EMPLOYEE_TOKEN"
 ```
@@ -283,7 +308,7 @@ curl -X POST \
 Create room:
 ```bash
 curl -X POST \
-  'http://127.0.0.1:8000/admin/hotels/11/rooms/new' \
+  'http://127.0.0.1:8000/admin/hotels/9/rooms/new' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -H "Authorization: $ADMIN_TOKEN" \
@@ -305,7 +330,7 @@ curl -X POST \
 Create employee:
 ```bash
 curl -X POST \
-  'http://127.0.0.1:8000/admin/employees/new?hotel_id=11' \
+  'http://127.0.0.1:8000/admin/employees/new?hotel_id=9' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -H "Authorization: $ADMIN_TOKEN" \
@@ -340,7 +365,7 @@ curl -X PUT \
 Update email addresses and street address of hotel:
 ```bash
 curl -X PUT \
-  'http://127.0.0.1:8000/admin/hotels/11/manage' \
+  'http://127.0.0.1:8000/admin/hotels/9/manage' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -H "Authorization: $ADMIN_TOKEN" \
@@ -357,7 +382,7 @@ curl -X PUT \
 Update amenity and problem of room:
 ```bash
 curl -X PUT \
-  'http://127.0.0.1:8000/admin/hotels/11/rooms/100/manage' \
+  'http://127.0.0.1:8000/admin/hotels/9/rooms/100/manage' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -H "Authorization: $ADMIN_TOKEN" \
@@ -386,18 +411,18 @@ curl -X PUT \
 
 ### Delete
 
-Delete hotel chain:
+Delete hotel chain (restricts until no employee under chain exists):
 ```bash
 curl -X DELETE \
-  'http://127.0.0.1:8000/admin/hotel_chains/Escape/delete' \
+  'http://127.0.0.1:8000/admin/hotel_chains/Paradise%20Retreat/delete' \
   -H 'accept: application/json' \
   -H "Authorization: $ADMIN_TOKEN"
 ```
 
-Delete hotel:
+Delete hotel (restricts until no employee under hotel exists):
 ```bash
 curl -X DELETE \
-  'http://127.0.0.1:8000/admin/hotels/11/delete' \
+  'http://127.0.0.1:8000/admin/hotels/9/delete' \
   -H 'accept: application/json' \
   -H "Authorization: $ADMIN_TOKEN"
 ```
@@ -405,7 +430,7 @@ curl -X DELETE \
 Delete room:
 ```bash
 curl -X DELETE \
-  'http://127.0.0.1:8000/admin/hotels/11/rooms/100/delete' \
+  'http://127.0.0.1:8000/admin/hotels/9/rooms/100/delete' \
   -H 'accept: application/json' \
   -H "Authorization: $ADMIN_TOKEN"
 ```

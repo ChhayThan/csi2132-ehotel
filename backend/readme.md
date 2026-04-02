@@ -28,8 +28,15 @@ Database:
 - `DB_PORT` default: `5432`
 - `DB_USER` default: `public`
 - `DB_PASSWORD` default: empty string
+- `DB_WS_USER_PASSWORD` default: `DB_PASSWORD`
+- `DB_WS_CUSTOMER_PASSWORD` default: `DB_WS_USER_PASSWORD`
+- `DB_WS_EMPLOYEE_PASSWORD` default: `DB_WS_USER_PASSWORD`
+- `DB_WS_ADMIN_PASSWORD`  default: `DB_WS_EMPLOYEE_PASSWORD`
+- `DB_WS_AUTH_PASSWORD` default: `DB_WS_USER_PASSWORD`
 
-If the `DB_*` variables are not set, it uses the defaults above
+If the `DB_*` variables are not set, it uses the defaults above. 
+Depending on the request, the webserver uses one of the webserver roles in the database. 
+The password inheritance is inherited as described if any passwords are unspecified.
 
 Example local setup:
 
@@ -45,3 +52,32 @@ fastapi dev --entrypoint api:app
 ```
 
 View docs at `http://127.0.0.1:8000/docs`
+
+## Setting up the Database
+
+As a user with sufficient permissions:  
+
+Install postgres and create the database
+```bash
+createdb $DB_NAME
+```
+
+Run the setup python scripts (assuming cwd is the project root)
+```bash
+cd backend
+
+python ddl/generate_roles_from_env.py
+python mock_data/populate_tables.py
+```
+
+Run the ddl files in order  
+1. create_types.sql
+1. create_tables.sql
+1. all files under backend/functions/
+1. all files under backend/views/
+1. init_roles.sql
+1. all files under backend/triggers/
+
+Initial data
+1. Run the `load_mock_data.sql` file under `backend/mock_data` generated earlier.
+1. Run alter_sequences.sql
