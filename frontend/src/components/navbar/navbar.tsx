@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Role } from "../../types/enums";
 import logoBlue from "../../assets/logo_blue.svg";
 import "../../types/svg.d.ts"
@@ -11,12 +11,15 @@ type NavbarProps = {
     user_name?: string;
     currency: string;
     setCurrency: (currency: string) => void;
+    onSignOut?: () => void;
 };
 
-const Navbar = ({ user_type, user_name, currency, setCurrency }: NavbarProps) => {
+const Navbar = ({ user_type, user_name, currency, setCurrency, onSignOut }: NavbarProps) => {
+    const navigate = useNavigate();
 
     const handleSignOut = () => {
-        // SIGN OUT LOGIC
+        onSignOut?.();
+        navigate("/");
     }
     
     return <nav className="fixed top-0 left-0 w-full flex justify-between items-center px-6 py-5 bg-white text-black shadow-sm z-100">

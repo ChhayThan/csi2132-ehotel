@@ -1,23 +1,53 @@
 import { useState } from "react";
-import { Link } from "react-router-dom"; 
+import { Link, useNavigate } from "react-router-dom";
+import { ApiError } from "../lib/api";
+import { useAuth } from "../context/auth_context";
 
 const RegisterCard = () => {
-
+    const navigate = useNavigate();
+    const { registerCustomer } = useAuth();
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
+    const [address, setAddress] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [license, setLicense] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
-    const handleRegister = (e: React.FormEvent) => {
+    const handleRegister = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setErrorMessage("");
+
         if (password !== confirmPassword) {
-            alert("Passwords do not match.") // maybe will add like live password checking later
+            setErrorMessage("Passwords do not match.");
+            return;
         }
 
-        e.preventDefault();
-        // REGISTRATION LOGIC
-    }
+        try {
+            setIsSubmitting(true);
+
+            await registerCustomer({
+                email: email.trim(),
+                password,
+                first_name: firstName.trim(),
+                last_name: lastName.trim(),
+                drivers_license: license.trim(),
+                address: address.trim(),
+            });
+
+            navigate("/");
+        } catch (error) {
+            if (error instanceof ApiError) {
+                setErrorMessage(error.message);
+            } else {
+                setErrorMessage("Something went wrong. Please try again.");
+            }
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
 
     return <div className="bg-white flex flex-col gap-4 w-100 p-9 rounded-xl shadow-lg shadow-black/60">
         <h2 className="text-lg">Register</h2>
@@ -43,6 +73,13 @@ const RegisterCard = () => {
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                required
+                className="border px-3 py-2 rounded-lg border-muted text-sm"
+            />
+            <input
+                placeholder="Address"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
                 required
                 className="border px-3 py-2 rounded-lg border-muted text-sm"
             />
@@ -80,7 +117,16 @@ const RegisterCard = () => {
                 required
                 className="border px-3 py-2 rounded-lg border-muted text-sm"
             />
-            <button type="submit" className="bg-gradient-to-r from-primary to-blue-900 text-white py-3 rounded-lg mt-3 text-sm font-semibold cursor-pointer shadow-md shadow-muted"> REGISTER </button>
+            {errorMessage ? <p className="mt-2 text-sm text-red-600">{errorMessage}</p> : null}
+            <button
+                type="submit"
+                disabled={isSubmitting}
+                className={`bg-gradient-to-r from-primary to-blue-900 text-white py-3 rounded-lg mt-3 text-sm font-semibold cursor-pointer shadow-md shadow-muted ${
+                    isSubmitting ? "opacity-70" : ""
+                }`}
+            >
+                {isSubmitting ? "REGISTERING..." : "REGISTER"}
+            </button>
         </form>
         <div className="flex flex-col items-center gap-1">
             <p className="text-sm text-black/60">Already have an account? <Link to="/login" className="text-primary font-semibold underline">Login here</Link></p> 
