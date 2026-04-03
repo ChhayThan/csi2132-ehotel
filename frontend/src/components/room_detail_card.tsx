@@ -7,6 +7,16 @@ import WavesRoundedIcon from "@mui/icons-material/WavesRounded";
 import type { ReactNode } from "react";
 import RoomProblemAlert from "./room_problem_alert";
 
+function formatPhoneNumber(phoneNumber: string) {
+  const digits = phoneNumber.replace(/\D/g, "");
+
+  if (digits.length !== 10) {
+    return phoneNumber;
+  }
+
+  return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+}
+
 type RoomDetailCardProps = {
   hotelName: string;
   chainName: string;
@@ -95,7 +105,7 @@ const RoomDetailCard = ({
 
         {problemMessage ? <RoomProblemAlert className="mt-6" message={problemMessage} /> : null}
 
-        <div className="mt-7 grid gap-7 lg:grid-cols-[minmax(0,1fr)_18rem]">
+        <div className="mt-7 grid gap-7 lg:grid-cols-[minmax(0,1fr)_22rem]">
           <section>
             <h4 className="text-lg font-semibold text-slate-950">Amenities</h4>
             <ul className="mt-4 grid list-disc gap-x-8 gap-y-2 pl-5 text-sm text-slate-700 sm:grid-cols-2 xl:grid-cols-3">
@@ -108,16 +118,16 @@ const RoomDetailCard = ({
           <section className="rounded-2xl border border-black/8 bg-slate-50 p-5">
             <h4 className="text-lg font-semibold text-slate-950">Contact Information</h4>
             <div className="mt-4 space-y-3 text-sm text-slate-700">
-              <div className="flex items-center gap-3">
-                <EmailRoundedIcon fontSize="small" className="text-primary" />
-                <span>{contactEmail}</span>
+              <div className="flex items-start gap-3">
+                <EmailRoundedIcon fontSize="small" className="mt-0.5 shrink-0 text-primary" />
+                <span className="min-w-0 break-all">{contactEmail}</span>
               </div>
               <div className="flex items-center gap-3">
-                <CallRoundedIcon fontSize="small" className="text-primary" />
-                <span>{contactPhone}</span>
+                <CallRoundedIcon fontSize="small" className="shrink-0 text-primary" />
+                <span>{formatPhoneNumber(contactPhone)}</span>
               </div>
               <div className="flex items-center gap-3">
-                <WavesRoundedIcon fontSize="small" className="text-primary" />
+                <WavesRoundedIcon fontSize="small" className="shrink-0 text-primary" />
                 <span>{viewLabel}</span>
               </div>
             </div>
