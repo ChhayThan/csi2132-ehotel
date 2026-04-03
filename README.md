@@ -10,6 +10,8 @@ Follow the instructions to [install and integrate docker desktop with wsl](https
 
 We recommend installing the Ubuntu distribution. If you already have wsl but not the correct distribution, you can install it with `wsl --install Ubuntu`
 
+Note: if you have wsl installed but **do not want to install docker desktop** follow the instructions for [installing docker on Ubuntu](#linux) inside a wsl terminal.  
+
 You can test for whether the distribution is default with wsl by running `wsl -l --all`. If the distribution you are planning to use is not the default (running the list command does not show "Default" in brackets beside the distro name), you will need to follow the instructions to [allow integration between that distribution and docker desktop](https://docs.docker.com/desktop/features/wsl/#enable-docker-in-a-wsl-2-distribution) at step 2.
 
 Once wsl is setup, run wsl in a terminal using
@@ -20,6 +22,8 @@ wsl --distribution Ubuntu
 Run all future commands in wsl.
 
 #### Linux
+To test whether docker is installed run `docker --help`. If the command is not recognised, you will need to install docker.
+
 Follow the instructions to [install docker and docker compose using apt](https://docs.docker.com/engine/install/ubuntu/).  
 
 #### MacOS
