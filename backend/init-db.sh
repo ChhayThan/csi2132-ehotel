@@ -36,6 +36,6 @@ done
 
 # 5. Load data and alter sequences
 psql_transaction mock_data/load_mock_data.sql
-psql_transaction ddl/alter_sequences.sql
+psql_transaction mock_data/alter_sequences.sql
 
 echo "Database setup script completed successfully."

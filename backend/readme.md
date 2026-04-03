@@ -80,4 +80,4 @@ Run the ddl files in order
 
 Initial data
 1. Run the `load_mock_data.sql` file under `backend/mock_data` generated earlier.
-1. Run alter_sequences.sql
+1. Run mock_data/alter_sequences.sql

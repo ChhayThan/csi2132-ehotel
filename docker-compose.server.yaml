@@ -51,7 +51,12 @@ services:
       - DB_WS_EMPLOYEE_PASSWORD
       - DB_WS_ADMIN_PASSWORD
       - DB_WS_AUTH_PASSWORD
-    command: ["fastapi", "dev", "--entrypoint", "api:app", "--host", "0.0.0.0", "--port", "8000"]
+    command: ["fastapi", "dev", "/app/api.py", "--host", "0.0.0.0", "--port", "8000"]
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./backend/app
+          target: /app
 
 volumes:
   db_data:
