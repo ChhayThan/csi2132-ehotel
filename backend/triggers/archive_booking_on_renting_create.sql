@@ -3,7 +3,7 @@ $$
     BEGIN
 
         IF NEW.booking_id IS NOT NULL THEN
-            SELECT archive_booking(NEW.booking_id);
+            PERFORM archive_booking(NEW.booking_id);
         END IF;
 
         RETURN NULL;
