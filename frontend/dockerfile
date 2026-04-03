@@ -1,0 +1,19 @@
+# Use an LTS Node.js version
+FROM node:24-slim
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files and install dependencies
+# Doing this before copying the rest of the code optimizes the build cache
+COPY package.json package-lock.json ./
+RUN npm install
+
+# Copy the rest of the frontend source code
+COPY . .
+
+# Vite's default port
+EXPOSE 5173
+
+# Run Vite with the --host flag so it's accessible from the host browser
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]

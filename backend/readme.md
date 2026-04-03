@@ -26,7 +26,7 @@ Database:
 - `DB_NAME` default: `ehoteldb`
 - `DB_HOST` default: `localhost`
 - `DB_PORT` default: `5432`
-- `DB_USER` default: `public`
+- `DB_USER` default: `postgres`
 - `DB_PASSWORD` default: empty string
 - `DB_WS_USER_PASSWORD` default: `DB_PASSWORD`
 - `DB_WS_CUSTOMER_PASSWORD` default: `DB_WS_USER_PASSWORD`
@@ -80,4 +80,4 @@ Run the ddl files in order
 
 Initial data
 1. Run the `load_mock_data.sql` file under `backend/mock_data` generated earlier.
-1. Run alter_sequences.sql
+1. Run mock_data/alter_sequences.sql
