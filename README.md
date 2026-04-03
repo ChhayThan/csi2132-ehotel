@@ -1,16 +1,64 @@
-# React + Vite
+# E Hotels
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Setup
 
-Currently, two official plugins are available:
+### Prerequisite: Install Docker
+Skip this step if your system already has docker installed and go directly to [starting the project](#start-the-project).
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+#### Windows
+Follow the instructions to [install and integrate docker desktop with wsl](https://docs.docker.com/desktop/features/wsl/).  
 
-## React Compiler
+We recommend installing the Ubuntu distribution. If you already have wsl but not the correct distribution, you can install it with `wsl --install Ubuntu`
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+You can test for whether the distribution is default with wsl by running `wsl -l --all`. If the distribution you are planning to use is not the default (running the list command does not show "Default" in brackets beside the distro name), you will need to follow the instructions to [allow integration between that distribution and docker desktop](https://docs.docker.com/desktop/features/wsl/#enable-docker-in-a-wsl-2-distribution) at step 2.
 
-## Expanding the ESLint configuration
+Once wsl is setup, run wsl in a terminal using
+```
+wsl --distribution Ubuntu
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Run all future commands in wsl.
+
+#### Linux
+Follow the instructions to [install docker and docker compose using apt](https://docs.docker.com/engine/install/ubuntu/).  
+
+#### MacOS
+Follow the instructions to [install docker desktop](https://docs.docker.com/desktop/setup/install/mac-install/).
+
+### Start the project
+In the project top level directory (i.e. `/path/to/the/repo/csi2132-ehotel/`)
+
+#### Environment Variables
+Set the environment variables described in backend/readme.md by adding them to a .env file
+
+Sample .env file
+```
+DB_NAME=ehoteldb
+DB_USER=postgres
+DB_PASSWORD=change-me!
+```
+
+#### Run with Compose
+Compose builds and runs the entire project
+```
+sudo docker compose -f docker-compose.frontend.yaml -f docker-compose.server.yaml up --build
+```
+
+Go to http://localhost:5173 to explore the web application!  
+
+
+To run just the backend in order to interact with the database
+```
+sudo docker compose -f docker-compose.server.yaml up --build
+```
+
+To interact with the backend api, use curl or a fetch library in your favourite language. If you have postgres installed, you can connect to the database directly at localhost:5432 using pgadmin or psql
+
+### Stop the project
+To stop the project cleanly use docker compose to remove any containers / volumes / networks.
+
+```
+sudo docker compose -f docker-compose.frontend.yaml -f docker-compose.server.yaml down -v
+```
+
+Note: db initialisation only occurs if a postgres data volume does not exist (i.e. the project was torn down properly with docker compose)
