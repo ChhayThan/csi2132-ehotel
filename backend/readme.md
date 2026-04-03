@@ -38,6 +38,9 @@ If the `DB_*` variables are not set, it uses the defaults above.
 Depending on the request, the webserver uses one of the webserver roles in the database. 
 The password inheritance is inherited as described if any passwords are unspecified.
 
+## Local Setup
+**Only follow these instructions if you want to setup a postgres database + api server outside of a container instead of running the docker containers**
+
 Example local setup:
 
 ```bash
@@ -53,7 +56,7 @@ fastapi dev --entrypoint api:app
 
 View docs at `http://127.0.0.1:8000/docs`
 
-## Setting up the Database
+### Setting up the Database
 
 As a user with sufficient permissions:  
 
