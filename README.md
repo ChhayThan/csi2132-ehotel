@@ -30,10 +30,12 @@ Follow the instructions to [install docker and docker compose using apt](https:/
 Follow the instructions to [install docker desktop](https://docs.docker.com/desktop/setup/install/mac-install/).
 
 ### Start the project
-In the project top level directory (i.e. `/path/to/the/repo/csi2132-ehotel/`)
+After cloning the repo, in the project top level directory (i.e. `/path/to/the/repo/csi2132-ehotel/`).
 
-#### Environment Variables
-Set the environment variables described in backend/readme.md by adding them to a .env file
+#### Step 1: Environment Variables
+Set the environment variables by adding them to a .env file. Format for the .env file is key-value pairs in the form `ENV_VAR=value`. If a .env file does not already exist, create it in the top level directory. The environment variables used by the application are listed along with their description and default values in backend/readme.md 
+
+DB_PASSWORD is the only required variable. It cannot be empty.
 
 Sample .env file
 ```
@@ -42,7 +44,7 @@ DB_USER=postgres
 DB_PASSWORD=change-me!
 ```
 
-#### Run with Compose
+#### Step 2: Run with Compose
 Compose builds and runs the entire project
 ```
 sudo docker compose -f docker-compose.frontend.yaml -f docker-compose.server.yaml up --build
@@ -56,7 +58,7 @@ To run just the backend in order to interact with the database
 sudo docker compose -f docker-compose.server.yaml up --build
 ```
 
-To interact with the backend api, use curl or a fetch library in your favourite language. If you have postgres installed, you can connect to the database directly at localhost:5432 using pgadmin or psql
+To interact with the backend api, use curl or a fetch library in your favourite language. If you have postgres installed, you can connect to the database directly at localhost:5432 using pgadmin or psql (`psql $DB_NAME -U $DB_USER`)
 
 ### Stop the project
 To stop the project cleanly use docker compose to remove any containers / volumes / networks.
