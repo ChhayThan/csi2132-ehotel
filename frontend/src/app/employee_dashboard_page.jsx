@@ -377,7 +377,6 @@ function EmployeeDashboardPage() {
     await convertEmployeeBookingToRenting(
       {
         booking_id: rentTarget.booking_id,
-        checkout_date: payload.checkoutDate,
         payment_type: payload.paymentType,
         payment_amount: payload.paymentAmount,
       },

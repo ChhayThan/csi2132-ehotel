@@ -27,7 +27,6 @@ type DirectRentPayload = {
 };
 
 type ConvertBookingPayload = {
-  checkoutDate: string;
   paymentType: PaymentType;
   paymentAmount: number;
 };
@@ -163,7 +162,6 @@ const RentModal = ({
     try {
       if (is_booked) {
         await onSubmitBookedRent?.({
-          checkoutDate,
           paymentType,
           paymentAmount: calculatedTotal,
         });
@@ -284,9 +282,20 @@ const RentModal = ({
 
             <label className="flex items-center gap-3 rounded-2xl border border-black/30 px-5 py-4 text-sm">
               <CalendarMonthOutlinedIcon className="text-black/55" />
+              <span className="min-w-28 text-slate-500">Check-in date</span>
               <input
                 type="date"
-                placeholder="Check-out date"
+                value={effectiveCheckinDate}
+                readOnly
+                className="w-full cursor-default bg-transparent outline-none"
+              />
+            </label>
+
+            <label className="flex items-center gap-3 rounded-2xl border border-black/30 px-5 py-4 text-sm">
+              <CalendarMonthOutlinedIcon className="text-black/55" />
+              <span className="min-w-28 text-slate-500">Check-out date</span>
+              <input
+                type="date"
                 value={checkoutDate}
                 onChange={(e) => setCheckoutDate(e.target.value)}
                 required
@@ -304,19 +313,13 @@ const RentModal = ({
               <p>
                 Email / ID: <span className="font-medium text-slate-800">{email}</span>
               </p>
+              <p>
+                Check-in date: <span className="font-medium text-slate-800">{effectiveCheckinDate}</span>
+              </p>
+              <p>
+                Check-out date: <span className="font-medium text-slate-800">{checkoutDate}</span>
+              </p>
             </div>
-            <label className="flex items-center gap-3 rounded-2xl border border-black/30 px-5 py-4 text-sm">
-              <CalendarMonthOutlinedIcon className="text-black/55" />
-              <input
-                type="date"
-                placeholder="Check-out date"
-                value={checkoutDate}
-                onChange={(e) => setCheckoutDate(e.target.value)}
-                required
-                min={effectiveCheckinDate || tomorrow}
-                className="w-full outline-none"
-              />
-            </label>
           </>
         )}
 
