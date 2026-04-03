@@ -109,6 +109,13 @@ class Renting(RentingUserDefined):
     creation_date: date
 
 
+class ArchivedRenting(RentingUserDefined):
+    ref_id: int
+    employee_id: int
+    booking_id: int | None = None
+    booking_creation_date: date | None = None
+
+
 class EmployeeRentCustomerInput(BaseModel):
     email: EmailStr
     first_name: Optional[str] = Field(default=None, min_length=1)

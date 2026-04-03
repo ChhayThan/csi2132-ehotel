@@ -7,7 +7,7 @@ from ..constants import DB_HOST, DB_PORT, WEBSERVER_AUTH_USER_PASSWORD, WEBSERVE
 
 from ..auth import hash_password, require_employee
 from ..models.auth_models import AuthenticatedUser, EmployeeCustomerLookupResponse
-from ..models.data_models import Booking, EmployeeDirectRentingRequest, PaymentType, Renting, RentingFromBookingRequest, RentingUserDefined
+from ..models.data_models import ArchivedRenting, Booking, EmployeeDirectRentingRequest, PaymentType, Renting, RentingFromBookingRequest, RentingUserDefined
 from ..session import query_db_from_sql_file
 
 
@@ -57,7 +57,7 @@ def get_hotel_bookings(hotel_id: int, archived: bool, employee: AuthenticatedUse
 
 
 @router.get("/hotels/{hotel_id}/rentings")
-def get_hotel_rentings(hotel_id: int, archived: bool, employee: AuthenticatedUser = Depends(require_employee)) -> list[Renting]:
+def get_hotel_rentings(hotel_id: int, archived: bool, employee: AuthenticatedUser = Depends(require_employee)) -> list[Renting] | list[ArchivedRenting]:
     ensure_employee_hotel_access(hotel_id, employee)
 
     res = query_db_from_sql_file(
@@ -66,6 +66,9 @@ def get_hotel_rentings(hotel_id: int, archived: bool, employee: AuthenticatedUse
         user=WS_EMPLOYEE_USER,
         password=WEBSERVER_EMPLOYEE_USER_PASSWORD,
     )
+
+    if archived:
+        return [ArchivedRenting(**row) for row in res]
 
     return [Renting(**row) for row in res]
 
