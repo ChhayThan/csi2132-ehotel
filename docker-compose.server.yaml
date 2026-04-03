@@ -1,0 +1,83 @@
+services:
+  db:
+    build:
+      context: ./backend
+      dockerfile: db.dockerfile
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    environment:
+      - DB_NAME
+      - DB_USER
+      - DB_PASSWORD
+      - POSTGRES_DB=${DB_NAME:-ehoteldb}
+      - POSTGRES_USER=${DB_USER:-postgres}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_HOST_AUTH_METHOD=scram-sha-256
+      - POSTGRES_INITDB_ARGS=--auth-host=scram-sha-256
+      - DB_WS_USER_PASSWORD
+      - DB_WS_CUSTOMER_PASSWORD
+      - DB_WS_EMPLOYEE_PASSWORD
+      - DB_WS_ADMIN_PASSWORD
+      - DB_WS_AUTH_PASSWORD
+    command: [
+      "postgres",
+      "-c", "password_encryption=scram-sha-256",
+      "-c", "cron.database_name=${DB_NAME:-ehoteldb}",
+      "-c", "cron.host=''",
+    ]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-ehoteldb}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "${DB_PORT:-5432}:5432"
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: app.dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    environment:
+      - AUTH_SECRET_KEY
+      - AUTH_ALGORITHM
+      - AUTH_ACCESS_TOKEN_EXPIRE_MINUTES
+      - DB_NAME
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER
+      - DB_PASSWORD
+      - DB_WS_USER_PASSWORD
+      - DB_WS_CUSTOMER_PASSWORD
+      - DB_WS_EMPLOYEE_PASSWORD
+      - DB_WS_ADMIN_PASSWORD
+      - DB_WS_AUTH_PASSWORD
+    command: ["fastapi", "dev", "api.py", "--host", "0.0.0.0", "--port", "8000"]
+    volumes:
+      # Hot reload
+      - ./backend/app:/app
+
+  cron-setup:
+    image: postgres:17
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      # Mount the folder containing the script and the sql files
+      - ./backend/cron:/cron
+    environment:
+      - PGPASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME:-ehoteldb}
+      - POSTGRES_USER=${DB_USER:-postgres}
+      - DB_HOST=db
+    # Set the working directory to where the script is
+    working_dir: /cron
+    # Execute the bash script
+    command: ["/bin/bash", "./init-cron.sh"]
+
+volumes:
+  db_data:

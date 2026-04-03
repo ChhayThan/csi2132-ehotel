@@ -26,7 +26,7 @@ Database:
 - `DB_NAME` default: `ehoteldb`
 - `DB_HOST` default: `localhost`
 - `DB_PORT` default: `5432`
-- `DB_USER` default: `public`
+- `DB_USER` default: `postgres`
 - `DB_PASSWORD` default: empty string
 - `DB_WS_USER_PASSWORD` default: `DB_PASSWORD`
 - `DB_WS_CUSTOMER_PASSWORD` default: `DB_WS_USER_PASSWORD`
@@ -37,6 +37,9 @@ Database:
 If the `DB_*` variables are not set, it uses the defaults above. 
 Depending on the request, the webserver uses one of the webserver roles in the database. 
 The password inheritance is inherited as described if any passwords are unspecified.
+
+## Local Setup
+**Only follow these instructions if you want to setup a postgres database + api server outside of a container instead of running the docker containers**
 
 Example local setup:
 
@@ -53,7 +56,7 @@ fastapi dev --entrypoint api:app
 
 View docs at `http://127.0.0.1:8000/docs`
 
-## Setting up the Database
+### Setting up the Database
 
 As a user with sufficient permissions:  
 
@@ -80,4 +83,4 @@ Run the ddl files in order
 
 Initial data
 1. Run the `load_mock_data.sql` file under `backend/mock_data` generated earlier.
-1. Run alter_sequences.sql
+1. Run mock_data/alter_sequences.sql
