@@ -14,6 +14,9 @@ python3 mock_data/populate_tables.py
 
 echo "Executing SQL files in order..."
 
+# set cron parameters
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" -f cron/init_cron.sql
+
 # 2. Run DDL and schema files
 psql_transaction ddl/create_types.sql
 psql_transaction ddl/create_tables.sql

@@ -19,7 +19,12 @@ services:
       - DB_WS_EMPLOYEE_PASSWORD
       - DB_WS_ADMIN_PASSWORD
       - DB_WS_AUTH_PASSWORD
-    command: ["postgres", "-c", "password_encryption=scram-sha-256"]
+    command: [
+      "postgres",
+      "-c", "password_encryption=scram-sha-256",
+      "-c", "cron.database_name=${DB_NAME:-ehoteldb}",
+      "-c", "cron.host=''",
+    ]
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-ehoteldb}"]
       interval: 5s
@@ -55,6 +60,24 @@ services:
     volumes:
       # Hot reload
       - ./backend/app:/app
+
+  cron-setup:
+    image: postgres:17
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      # Mount the folder containing the script and the sql files
+      - ./backend/cron:/cron
+    environment:
+      - PGPASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME:-ehoteldb}
+      - POSTGRES_USER=${DB_USER:-postgres}
+      - DB_HOST=db
+    # Set the working directory to where the script is
+    working_dir: /cron
+    # Execute the bash script
+    command: ["/bin/bash", "./init-cron.sh"]
 
 volumes:
   db_data:
