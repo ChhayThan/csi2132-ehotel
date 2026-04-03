@@ -97,6 +97,14 @@ const RentModal = ({
   const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const resetCustomerFields = () => {
+    setFirstName("");
+    setLastName("");
+    setDriversLicense("");
+    setAddress("");
+    setPassword("");
+  };
+
   useEffect(() => {
     if (is_booked && email) {
       setInputEmail(email);
@@ -145,10 +153,13 @@ const RentModal = ({
         setAddress(result.address ?? "");
         setDriversLicense(result.id ?? "");
         setPassword("");
+      } else {
+        resetCustomerFields();
       }
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "Unable to look up customer right now.");
       setCustomerLookupResult(null);
+      resetCustomerFields();
     } finally {
       setIsCustomerLookupLoading(false);
     }
@@ -204,7 +215,7 @@ const RentModal = ({
   };
 
   return (
-    <div className="bg-white flex w-full max-w-[38rem] flex-col gap-6 rounded-[2rem] p-8 shadow-[0_8px_25px_rgba(0,0,0,0.28)] sm:p-10">
+    <div className="flex max-h-[85vh] w-full max-w-[38rem] flex-col gap-6 overflow-y-auto rounded-[2rem] bg-white p-8 shadow-[0_8px_25px_rgba(0,0,0,0.28)] sm:p-10">
       <h2 className="text-3xl text-slate-950">
         Renting <strong>Room {room_num}</strong> to {is_booked ? name ?? email ?? "Customer" : "a Customer"}
       </h2>
@@ -220,6 +231,8 @@ const RentModal = ({
                 onChange={(e) => {
                   setInputEmail(e.target.value);
                   setCustomerLookupResult(null);
+                  setErrorMessage("");
+                  resetCustomerFields();
                 }}
                 onBlur={handleLookupCustomer}
                 required
