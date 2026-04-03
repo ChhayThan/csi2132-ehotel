@@ -8,6 +8,19 @@ import HotelRoomListCard from "../components/hotel_room_list_card";
 import { getAvailableRooms, getHotelDetails } from "../lib/protected_api";
 import { fallbackRoomImage, getRoomType, hasValidStayDates } from "../lib/booking_flow_utils";
 
+const amenityOptions = [
+  { value: "WiFi", label: "WiFi" },
+  { value: "TV", label: "TV" },
+  { value: "AC", label: "Air Conditioning" },
+  { value: "Heating", label: "Heating" },
+  { value: "Balcony", label: "Balcony" },
+  { value: "Fridge", label: "Mini Fridge" },
+  { value: "Microwave", label: "Microwave" },
+  { value: "Desk", label: "Desk / Workspace" },
+  { value: "Safe", label: "In-room Safe" },
+  { value: "Parking", label: "Parking Access" },
+];
+
 const longDateFormatter = new Intl.DateTimeFormat("en-US", {
   month: "long",
   day: "numeric",
@@ -29,7 +42,7 @@ function HotelRoomListPage() {
   const [rooms, setRooms] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
-  const [amenityFilter, setAmenityFilter] = useState("None");
+  const [amenityFilters, setAmenityFilters] = useState([]);
   const [capacityFilter, setCapacityFilter] = useState([]);
   const [maxPrice, setMaxPrice] = useState(450);
   const [sortBy, setSortBy] = useState("recommended");
@@ -104,9 +117,11 @@ function HotelRoomListPage() {
   const filteredRooms = useMemo(() => {
     let nextRooms = rooms.filter((room) => Number(room.price) <= maxPrice);
 
-    if (amenityFilter !== "None") {
+    if (amenityFilters.length > 0) {
       nextRooms = nextRooms.filter((room) =>
-        room.amenities.some((amenity) => amenity.includes(amenityFilter)),
+        amenityFilters.some((selectedAmenity) =>
+          room.amenities.some((amenity) => amenity.includes(selectedAmenity))
+        ),
       );
     }
 
@@ -123,10 +138,16 @@ function HotelRoomListPage() {
     }
 
     return nextRooms;
-  }, [amenityFilter, capacityFilter, maxPrice, rooms, sortBy]);
+  }, [amenityFilters, capacityFilter, maxPrice, rooms, sortBy]);
 
   const toggleCapacity = (value) => {
     setCapacityFilter((current) =>
+      current.includes(value) ? current.filter((item) => item !== value) : [...current, value]
+    );
+  };
+
+  const toggleAmenity = (value) => {
+    setAmenityFilters((current) =>
       current.includes(value) ? current.filter((item) => item !== value) : [...current, value]
     );
   };
@@ -188,19 +209,17 @@ function HotelRoomListPage() {
             <div className="mt-5 space-y-6 text-sm text-slate-600">
               <div>
                 <p className="font-medium text-slate-900">Amenities</p>
-                <div className="relative mt-2">
-                  <select
-                    value={amenityFilter}
-                    onChange={(event) => setAmenityFilter(event.target.value)}
-                    className="w-full appearance-none rounded-lg border border-black/12 px-3 py-2 pr-10 outline-none"
-                  >
-                    <option>None</option>
-                    <option>WiFi</option>
-                    <option>Balcony</option>
-                    <option>Kitchen</option>
-                    <option>Ocean View</option>
-                  </select>
-                  <KeyboardArrowDownRoundedIcon className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                <div className="mt-2 space-y-2">
+                  {amenityOptions.map((option) => (
+                    <label key={option.value} className="flex cursor-pointer items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={amenityFilters.includes(option.value)}
+                        onChange={() => toggleAmenity(option.value)}
+                      />
+                      <span>{option.label}</span>
+                    </label>
+                  ))}
                 </div>
               </div>
 

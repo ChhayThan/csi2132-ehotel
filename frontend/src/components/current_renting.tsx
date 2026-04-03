@@ -2,8 +2,7 @@ type CurrentRentingProps = {
   roomNumber: number;
   roomType: string;
   amenities: string[];
-  guestName: string;
-  guestEmail: string;
+  customerId: string;
   employeeName: string;
   employeeId: string;
   stayDates: string;
@@ -14,8 +13,7 @@ const CurrentRenting = ({
   roomNumber,
   roomType,
   amenities,
-  guestName,
-  guestEmail,
+  customerId,
   employeeName,
   employeeId,
   stayDates,
@@ -39,7 +37,7 @@ const CurrentRenting = ({
         </div>
         <div className="mt-4 space-y-1 text-sm text-slate-500">
           <p>
-            Guest: <span className="font-medium text-slate-700">{guestName}</span> ({guestEmail})
+            Customer ID: <span className="font-medium text-slate-700">{customerId}</span>
           </p>
           <p>
             Employee: <span className="font-medium text-slate-700">{employeeName}</span> ({employeeId})
@@ -50,13 +48,15 @@ const CurrentRenting = ({
         </div>
       </div>
 
-      <button
-        type="button"
-        onClick={onEndRenting}
-        className="rounded-lg bg-gradient-to-r from-red-700 to-red-900 px-5 py-3 text-sm font-semibold text-white shadow-md shadow-muted"
-      >
-        CANCEL RENTING
-      </button>
+      {onEndRenting ? (
+        <button
+          type="button"
+          onClick={onEndRenting}
+          className="rounded-lg bg-gradient-to-r from-red-700 to-red-900 px-5 py-3 text-sm font-semibold text-white shadow-md shadow-muted"
+        >
+          CANCEL RENTING
+        </button>
+      ) : null}
     </article>
   );
 };

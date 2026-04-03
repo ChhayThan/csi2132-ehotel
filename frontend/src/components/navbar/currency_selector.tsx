@@ -16,8 +16,8 @@ const CurrencySelector = ({ currency, setCurrency }: CurrencySelectorProps) => {
             className="appearance-none px-1 py-1 text-md cursor-pointer"
         >
             <option value="CAD">CAD</option>
-            <option value="USD">USD</option>
-            <option value="MXN">MXN</option>
+            {/* <option value="USD">USD</option>
+            <option value="MXN">MXN</option> */}
         </select>
         {currency === "CAD" && (<img src={canadaFlag} className="h-4" alt="Flag of Canada"/>)}
         {currency === "USD" && (<img src={usaFlag} className="h-4" alt="USA Flag"/>)}

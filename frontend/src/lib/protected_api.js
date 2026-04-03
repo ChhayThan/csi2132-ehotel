@@ -52,3 +52,25 @@ export function getEmployeeHotelRentings(hotelId, archived, token) {
     token,
   });
 }
+
+export function lookupEmployeeCustomerByEmail(email, token) {
+  return apiRequest(`/employee/customers/by-email?email=${encodeURIComponent(email)}`, {
+    token,
+  });
+}
+
+export function createEmployeeDirectRenting(payload, token) {
+  return apiRequest("/employee/rentings/direct", {
+    method: "POST",
+    body: payload,
+    token,
+  });
+}
+
+export function convertEmployeeBookingToRenting(payload, token) {
+  return apiRequest("/employee/rentings/convert", {
+    method: "POST",
+    body: payload,
+    token,
+  });
+}

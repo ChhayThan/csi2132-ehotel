@@ -1,7 +1,7 @@
 from datetime import date
-from typing import Literal
+from typing import Literal, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr, Field
 
 
 PaymentType = Literal["debit", "credit", "cash", "cheque", "gift card", "other"]
@@ -107,6 +107,24 @@ class Renting(RentingUserDefined):
     ref_id: int
     employee_id: int
     creation_date: date
+
+
+class EmployeeRentCustomerInput(BaseModel):
+    email: EmailStr
+    first_name: Optional[str] = Field(default=None, min_length=1)
+    last_name: Optional[str] = Field(default=None, min_length=1)
+    drivers_license: Optional[str] = Field(default=None, min_length=1, max_length=64)
+    address: Optional[str] = Field(default=None, min_length=1)
+    password: Optional[str] = Field(default=None, min_length=8, max_length=72)
+
+
+class EmployeeDirectRentingRequest(BaseModel):
+    hid: int
+    room_number: int
+    customer: EmployeeRentCustomerInput
+    checkout_date: date
+    payment_type: PaymentType
+    payment_amount: float
 
 
 class PartialHotelChain(BaseModel):

@@ -2,8 +2,7 @@ type CurrentBookingProps = {
   roomNumber: number;
   roomType: string;
   amenities: string[];
-  guestName: string;
-  guestEmail: string;
+  customerId: string;
   bookedDate: string;
   stayDates: string;
   onRent?: () => void;
@@ -13,8 +12,7 @@ const CurrentBooking = ({
   roomNumber,
   roomType,
   amenities,
-  guestName,
-  guestEmail,
+  customerId,
   bookedDate,
   stayDates,
   onRent,
@@ -37,7 +35,7 @@ const CurrentBooking = ({
         </div>
         <div className="mt-4 space-y-1 text-sm text-slate-500">
           <p>
-            Guest: <span className="font-medium text-slate-700">{guestName}</span> ({guestEmail})
+            Customer ID: <span className="font-medium text-slate-700">{customerId}</span>
           </p>
           <p>
             Date booked: <span className="font-medium text-slate-700">{bookedDate}</span>

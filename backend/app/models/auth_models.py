@@ -56,6 +56,15 @@ class CurrentEmployeeResponse(BaseModel):
     hid: int
 
 
+class EmployeeCustomerLookupResponse(BaseModel):
+    exists: bool
+    id: Optional[str] = None
+    email: Optional[EmailStr] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    address: Optional[str] = None
+
+
 class TokenUser(BaseModel):
     id: str
     actor_type: str
