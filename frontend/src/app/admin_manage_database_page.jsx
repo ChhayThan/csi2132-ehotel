@@ -15,6 +15,18 @@ import {
   getHotels,
   getEmployees,
   getRooms,
+  createHotelChain,
+  editHotelChain,
+  deleteHotelChain,
+  createHotel,
+  editHotel,
+  deleteHotel,
+  createRoom,
+  editRoom,
+  deleteRoom,
+  createEmployee,
+  editEmployee,
+  deleteEmployee,
 } from "../lib/protected_api";
 
 const addLabels = {
@@ -35,6 +47,7 @@ function AdminManageDatabasePage() {
   const { token, logout, displayName } = useAuth();
   const [adminData, setAdminData] = useState([])
   const [loading, setLoading] = useState(true);
+  const [refresh, setRefresh] = useState(0);
 
   // fetch all data at once, small dataset so this is okay
   useEffect(() => {
@@ -78,14 +91,14 @@ function AdminManageDatabasePage() {
         setSelectedChainId(data[0].name);
         setSelectedHotelId(data[0].hotels[0]?.hid ?? null);
       } catch (error) {
-        console.error("failed to fetch data")
+        alert(console.error("failed to fetch data"))
       } finally {
         setLoading(false);
       };
     };
 
     fetchData();
-  }, [token]);
+  }, [token, refresh]);
 
   const selectedChain = useMemo(
     () => adminData.find((chain) => chain.name === selectedChainId) ?? adminData[0] ?? null,
@@ -142,7 +155,7 @@ function AdminManageDatabasePage() {
   };
 
   if (loading) {
-    return <div>loading data...</div>
+    return <div className="mx-auto my-auto text-2xl black">Loading data...</div>
   }
 
   const totalCount = {
@@ -174,20 +187,137 @@ function AdminManageDatabasePage() {
     setDeleteEntityTarget(target);
   };
 
-  const handleMockEdit = (values) => {
-    console.log("Mock edit entity", {
-      entity: editEntityTarget?.entity,
-      target: editEntityTarget?.entityName,
-      values,
-    });
-  };
 
-  const handleMockDelete = () => {
-    console.log("Mock delete entity", {
-      entity: deleteEntityTarget?.entity,
-      target: deleteEntityTarget?.entityName,
-    });
-  };
+  const handleAdd = async (values) => {
+    try {
+      switch (view) {
+        case "chains":
+          await createHotelChain({
+            name: values.name,
+            address: values.address,
+            phone_number: values.phone,
+            email_addresses: [values.email],
+          }, token);
+          break;
+        case "hotels":
+          await createHotel(selectedChain.name, {
+            name: values.name,
+            address: {
+              street_address: values.streetAddress,
+              city: values.city,
+              country: values.country,
+            },
+            rating: 5,
+            phone_number: values.phone,
+            email_addresses: [values.email],
+            manager_eid: parseInt(values.managerId),
+          }, token);
+          break;
+        case "rooms":
+          await createRoom(selectedHotel.hid, {
+            room_number: parseInt(values.roomNumber),
+            price: parseFloat(values.price),
+            capacity: parseInt(values.capacity),
+            view: values.view === "" || values.view === "None" ? null : values.view,
+            extendable: values.extendable ?? false,
+            problem: values.problems ?? "",
+            amenities: values.amenities ? values.amenities.split(",").map(a => a.trim()) : [],
+          }, token);
+          break;
+        case "employees":
+          await createEmployee(selectedHotel.hid, {
+            first_name: values.firstName,
+            last_name: values.lastName,
+            address: values.address,
+            password: values.password,
+            role: values.role,
+          }, token);
+          break;
+      } 
+      setRefresh(x => x + 1)
+    } catch (error) {
+      console.error(JSON.stringify(error));
+      alert(JSON.stringify(error) || "Failed to add");
+    } finally {
+      setIsAddEntityOpen(false);
+    }
+  }
+
+   const handleEdit = async (values) => {
+    try {
+      switch (view) {
+        case "chains":
+          await editHotelChain(editEntityTarget.entityName, {
+            name: values.name,
+            address: values.address,
+            phone_number: values.phone,
+            email_addresses: [values.email],
+          }, token);
+          break;
+        case "hotels":
+          await editHotel(editEntityTarget.entityHotelId, {
+            name: values.name,
+            address: {
+              street_address: values.streetAddress,
+              city: values.city,
+              country: values.country,
+            },
+            phone_number: values.phone,
+            email_addresses: [values.email],
+          }, token);
+          break;
+        case "rooms":
+          await editRoom(editEntityTarget.entityHotelId, editEntityTarget.entityRoomNumber, {
+            room_number: parseInt(values.roomNumber),
+            price: parseFloat(values.price),
+            capacity: parseInt(values.capacity),
+            view: values.view === "" || values.view === "None" ? null : values.view,
+            extendable: values.extendable ?? false,
+            problem: values.problems ?? "",
+            amenities: values.amenities ? values.amenities.split(",").map(a => a.trim()) : [],
+          }, token);
+          break;
+        case "employees":
+          await editEmployee(editEntityTarget.entityEmployeeId, {
+            first_name: values.firstName,
+            last_name: values.lastName,
+            address: values.address,
+            password: values.password,
+            role: values.role,
+          }, token);
+          break;
+      } 
+      setRefresh(x => x + 1)
+    } catch (error) {
+      alert(error.message || "Failed to edit");
+    } finally {
+      setEditEntityTarget(null);
+    }
+  }
+
+  const handleDelete = async (values) => {
+    try {
+      switch (view) {
+        case "chains":
+          await deleteHotelChain(deleteEntityTarget.entityName, token);
+          break;
+        case "hotels":
+          await deleteHotel(deleteEntityTarget.entityHotelId, token);
+          break;
+        case "rooms":
+          await deleteRoom(deleteEntityTarget.entityHotelId, deleteEntityTarget.entityRoomNumber, token);
+          break;
+        case "employees":
+          await deleteEmployee(deleteEntityTarget.entityEmployeeId, token);
+          break;
+      };
+      setRefresh(x => x + 1)
+    } catch (error) {
+      alert(error.message || "Failed to delete");
+    } finally {
+      setDeleteEntityTarget(null);
+    }
+  }
 
   return (
     <div className="min-h-screen">
@@ -297,6 +427,7 @@ function AdminManageDatabasePage() {
                           openEditEntity({
                             entity: "Hotel",
                             entityName: hotel.name,
+                            entityHotelId: hotel.hid,
                             initialValues: {
                               name: hotel.name,
                               address: hotel.address.street_address,
@@ -311,6 +442,7 @@ function AdminManageDatabasePage() {
                           openDeleteEntity({
                             entity: "Hotel",
                             entityName: hotel.name,
+                            entityHotelId: hotel.hid,
                           })
                         }
                       />
@@ -328,6 +460,7 @@ function AdminManageDatabasePage() {
                           openEditEntity({
                             entity: "Employee",
                             entityName: employee.first_name,
+                            entityEmployeeId: employee.id,
                             initialValues: {
                               firstName: employee.first_name,
                               lastName: employee.last_name,
@@ -340,7 +473,8 @@ function AdminManageDatabasePage() {
                         onDelete={() =>
                           openDeleteEntity({
                             entity: "Employee",
-                            entityName: employee.name,
+                            entityName: `${employee.first_name} ${employee.last_name}`,
+                            entityEmployeeId: employee.id,
                           })
                         }
                       />
@@ -360,6 +494,8 @@ function AdminManageDatabasePage() {
                           openEditEntity({
                             entity: "Room",
                             entityName: `Room ${room.room_number}`,
+                            entityHotelId: selectedHotel.hid,
+                            entityRoomNumber: room.room_number,
                             initialValues: {
                               roomNumber: `${room.room_number}`,
                               capacity: ROOM_TYPE_MAP[room.capacity] ?? "Single",
@@ -375,6 +511,8 @@ function AdminManageDatabasePage() {
                           openDeleteEntity({
                             entity: "Room",
                             entityName: `Room ${room.roomNumber}`,
+                            entityHotelId: selectedHotel.hid,
+                            entityRoomNumber: room.room_number,
                           })
                         }
                       />
@@ -392,8 +530,9 @@ function AdminManageDatabasePage() {
             <AddEntity
               entity={entityType}
               curChainName={selectedChain.name}
-              curHotelName={selectedHotel.name}
+              curHotelName={selectedHotel?.name}
               setIsActive={setIsAddEntityOpen}
+              onCreate={handleAdd}
             />
           </div>
         </div>
@@ -407,7 +546,7 @@ function AdminManageDatabasePage() {
               entityName={editEntityTarget.entityName}
               initialValues={editEntityTarget.initialValues}
               setIsActive={() => setEditEntityTarget(null)}
-              onSave={handleMockEdit}
+              onSave={handleEdit}
             />
           </div>
         </div>
@@ -419,7 +558,7 @@ function AdminManageDatabasePage() {
             entity={deleteEntityTarget.entity}
             entityName={deleteEntityTarget.entityName}
             setIsActive={() => setDeleteEntityTarget(null)}
-            onDelete={handleMockDelete}
+            onDelete={handleDelete}
           />
         </div>
       ) : null}

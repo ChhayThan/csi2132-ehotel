@@ -184,9 +184,9 @@ const EditEntityModal = ({
           <option value="" disabled>
             Capacity
           </option>
-          <option value="Single">Single</option>
-          <option value="Double">Double</option>
-          <option value="Suite">Suite</option>
+          <option value="1">Single</option>
+          <option value="2">Double</option>
+          <option value="4">Suite</option>
         </select>
         <KeyboardArrowDownRoundedIcon className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-black/55" />
       </div>

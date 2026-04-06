@@ -10,10 +10,11 @@ type AddEntityProps = {
     entity: DbEntity;
     curChainName?: string;
     curHotelName?: string
+    onCreate: (values: Record<string, any>) => void;
     setIsActive: (active: boolean) => void;
 }
 
-const AddEntity = ({entity, curChainName, curHotelName, setIsActive}: AddEntityProps) => {
+const AddEntity = ({entity, curChainName, curHotelName, setIsActive, onCreate}: AddEntityProps) => {
     const inputClass = "w-full rounded-2xl border border-black/30 px-5 py-4 text-sm outline-none";
     const iconWrapClass = "flex items-center rounded-2xl border border-black/30 text-sm";
 
@@ -21,8 +22,12 @@ const AddEntity = ({entity, curChainName, curHotelName, setIsActive}: AddEntityP
     const [chainName, setChainName] = useState("");
     const [hotelName, setHotelName] = useState("");
     const [address, setAddress] = useState("");
+    const [streetAddress, setStreetAddress] = useState("");
+    const [city, setCity] = useState("");
+    const [country, setCountry] = useState("");
     const [email, setEmail] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
+    const [managerId, setManagerId] = useState("");
 
     // employee states
     const [firstName, setFirstName] = useState("");
@@ -51,6 +56,19 @@ const AddEntity = ({entity, curChainName, curHotelName, setIsActive}: AddEntityP
                 return `Add an Employee to ${curHotelName}`
         }
     }
+
+    const getValues = () => {
+        switch (entity) {
+            case "HotelChain":
+                return { name: chainName, address, email, phone: phoneNumber };
+            case "Hotel":
+                return { name: hotelName, streetAddress, city, country , email, phone: phoneNumber, managerId };
+            case "Room":
+                return { roomNumber: roomNum, capacity, view, amenities, problems, price };
+            default:
+                return { firstName, lastName, address: email, password, role }; 
+        }
+    };
 
     const formContent = () => {
         switch (entity) {
@@ -107,13 +125,27 @@ const AddEntity = ({entity, curChainName, curHotelName, setIsActive}: AddEntityP
                     <div className={iconWrapClass}>
                         <ApartmentRoundedIcon className="ml-4 text-[1.35rem] text-black/55"/>
                         <input 
-                            placeholder="Hotel Address"
-                            value={address}
-                            onChange={(e) => setAddress(e.target.value)}
+                            placeholder="Street Address"
+                            value={streetAddress}
+                            onChange={(e) => setStreetAddress(e.target.value)}
                             required
                             className="w-full px-3 py-4 outline-none"
                         />
                     </div>
+                    <input 
+                        placeholder="Country"
+                        value={country}
+                        onChange={(e) => setCountry(e.target.value)}
+                        required
+                        className={inputClass}
+                    />
+                    <input 
+                        placeholder="City"
+                        value={city}
+                        onChange={(e) => setCity(e.target.value)}
+                        required
+                        className={inputClass}
+                    />
                     <div className={iconWrapClass}>
                         <EmailRoundedIcon className="ml-4 text-[1.35rem] text-black/55"/>
                         <input 
@@ -135,6 +167,13 @@ const AddEntity = ({entity, curChainName, curHotelName, setIsActive}: AddEntityP
                             className="w-full px-3 py-4 outline-none"
                         />
                     </div>
+                    <input 
+                        placeholder="Add Manager ID"
+                        value={managerId}
+                        onChange={(e) => setManagerId(e.target.value)}
+                        required
+                        className={inputClass}
+                    />
                 </>
             case "Room":
                 return <>
@@ -155,9 +194,9 @@ const AddEntity = ({entity, curChainName, curHotelName, setIsActive}: AddEntityP
                         <option value="" className="text-muted py-2" disabled>
                             Capacity
                         </option>
-                        <option value="Single" className="text-black">Single</option>
-                        <option value="Double" className="text-black">Double</option>
-                        <option value="Suite" className="text-black">Suite</option>
+                        <option value="1" className="text-black">Single</option>
+                        <option value="2" className="text-black">Double</option>
+                        <option value="4" className="text-black">Suite</option>
                     </select>
                     <select
                         value={view}
@@ -263,22 +302,16 @@ const AddEntity = ({entity, curChainName, curHotelName, setIsActive}: AddEntityP
                         <option value="" className="text-muted py-2" disabled>
                             Select a Role
                         </option>
-                        <option value="Employee" className="text-black">Employee</option>
-                        <option value="Admin" className="text-black">Admin</option>
+                        <option value="regular" className="text-black">Employee</option>
+                        <option value="admin" className="text-black">Admin</option>
                     </select>
                 </>
         }
     }
 
-    const handleAddEntity = (e: React.FormEvent) => {
-        e.preventDefault();
-        //add whatever entity logic
-        setIsActive(false);
-    }
-
     return <div className="bg-white flex w-full max-w-[52rem] flex-col gap-6 rounded-[2rem] p-8 shadow-[0_8px_25px_rgba(0,0,0,0.28)] sm:p-10">
         <h2 className="text-3xl text-slate-950">{headerText()}</h2>
-        <form onSubmit={handleAddEntity} className="flex flex-col gap-4">
+        <form onSubmit={(e) => { e.preventDefault(); onCreate(getValues()); }} className="flex flex-col gap-4">
             {formContent()}
             <div className="mt-4 flex flex-col justify-center gap-4 sm:flex-row">
                 <button type="button" onClick={() => setIsActive(false)} className="cursor-pointer rounded-2xl bg-black/65 px-10 py-4 text-lg font-semibold text-white shadow-[0_6px_14px_rgba(0,0,0,0.18)]"> CANCEL </button>
@@ -287,7 +320,6 @@ const AddEntity = ({entity, curChainName, curHotelName, setIsActive}: AddEntityP
         </form>
         
     </div>
-
 };
 
 export default AddEntity;
