@@ -88,8 +88,8 @@ function AdminManageDatabasePage() {
         console.log(data); //tsetsttestsTESTSTE
 
         // initialize selected stuff
-        setSelectedChainId(data[0].name);
-        setSelectedHotelId(data[0].hotels[0]?.hid ?? null);
+        setSelectedChainId(prev => prev ?? data[0].name);
+        setSelectedHotelId(prev => prev ?? data[0].hotels[0]?.hid ?? null);
       } catch (error) {
         alert(console.error("failed to fetch data"))
       } finally {
@@ -147,12 +147,6 @@ function AdminManageDatabasePage() {
     employees: "Manage Employees",
     rooms: "Manage Rooms",
   }[view];
-
-  const ROOM_TYPE_MAP = {
-    1: "Single",
-    2: "Double",
-    4: "Suite",
-  };
 
   if (loading) {
     return <div className="mx-auto my-auto text-2xl black">Loading data...</div>
@@ -498,7 +492,7 @@ function AdminManageDatabasePage() {
                             entityRoomNumber: room.room_number,
                             initialValues: {
                               roomNumber: `${room.room_number}`,
-                              capacity: ROOM_TYPE_MAP[room.capacity] ?? "Single",
+                              capacity: room.capacity,
                               view: room.view.replace(" View", ""),
                               amenities: room.amenities?.join(", ") ?? "",
                               problems: room.problem ?? "",
