@@ -1,5 +1,7 @@
 import { apiRequest } from "./api";
 
+//employee endpoints
+
 export function getCustomerBookings(customerId, archived, token) {
   return apiRequest(`/${encodeURIComponent(customerId)}/bookings?archived=${archived}`, {
     token,
@@ -71,6 +73,31 @@ export function convertEmployeeBookingToRenting(payload, token) {
   return apiRequest("/employee/rentings/convert", {
     method: "POST",
     body: payload,
+    token,
+  });
+}
+
+//admin endpoints
+export function getHotelChains(token) {
+  return apiRequest("/admin/hotel_chains", { 
+    token,
+  });
+}
+
+export function getHotels(chain_name, token) {
+  return apiRequest(`/admin/hotel_chains/${chain_name}/hotels`, { 
+    token,
+  });
+}
+
+export function getRooms(hotelId, token) {
+  return apiRequest(`/admin/hotels/${hotelId}/rooms`, { 
+    token,
+  });
+}
+
+export function getEmployees(hotelId, token) {
+  return apiRequest(`/admin/hotels/${hotelId}/employees`, { 
     token,
   });
 }

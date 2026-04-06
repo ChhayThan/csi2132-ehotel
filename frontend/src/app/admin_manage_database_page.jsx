@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
 import AddEntity from "../components/add_entity";
 import DeleteEntityModal from "../components/delete_entity_modal";
@@ -9,169 +9,13 @@ import HotelCard from "../components/hotel_card";
 import RoomCard from "../components/room_card";
 import Navbar from "../components/navbar/navbar";
 
-
-const adminData = [
-  {
-    id: "azure-resorts",
-    name: "Azure Resorts",
-    city: "Toronto",
-    address: "100 King Street",
-    email: "hotelchain@email.com",
-    phone: "(123) 456-7890",
-    hotels: [
-      {
-        id: "grand-azure",
-        name: "The Grand Azure",
-        city: "Toronto",
-        address: "100 King Street",
-        rating: 4.95,
-        reviewCount: 641,
-        email: "hotelchain@email.com",
-        phone: "(123) 456-7890",
-        employees: [
-          { id: "E011122233", name: "Eric Chhour", role: "Admin" },
-          { id: "E011122234", name: "Leonardo Atalla", role: "Clerk" },
-          { id: "E011122235", name: "Xuan Pham", role: "Valet" },
-          { id: "E011122236", name: "Mia Chen", role: "Manager" },
-          { id: "E011122237", name: "Noah Patel", role: "Receptionist" },
-          { id: "E011122238", name: "Ava Thompson", role: "Housekeeping" },
-        ],
-        rooms: [
-          { id: 101, roomNumber: 101, price: 299, roomType: "Single", view: "City View" },
-          { id: 102, roomNumber: 102, price: 299, roomType: "Double", view: "City View" },
-          { id: 103, roomNumber: 103, price: 299, roomType: "Double", view: "Ocean View" },
-          { id: 104, roomNumber: 104, price: 329, roomType: "Suite", view: "Ocean View" },
-          { id: 201, roomNumber: 201, price: 299, roomType: "Single", view: "City View" },
-          { id: 202, roomNumber: 202, price: 299, roomType: "Double", view: "Ocean View" },
-          { id: 1001, roomNumber: 1001, price: 499, roomType: "Suite", view: "Ocean View" },
-          { id: 1002, roomNumber: 1002, price: 499, roomType: "Suite", view: "Ocean View" },
-        ],
-      },
-      {
-        id: "harbour-crest",
-        name: "Harbour Crest",
-        city: "Toronto",
-        address: "88 Queens Quay",
-        rating: 4.88,
-        reviewCount: 492,
-        email: "harbourcrest@email.com",
-        phone: "(123) 456-7801",
-        employees: [
-          { id: "E021122233", name: "Olivia Brown", role: "Manager" },
-          { id: "E021122234", name: "Liam Wilson", role: "Clerk" },
-        ],
-        rooms: [
-          { id: 301, roomNumber: 301, price: 259, roomType: "Single", view: "Harbour View" },
-          { id: 302, roomNumber: 302, price: 289, roomType: "Double", view: "Harbour View" },
-        ],
-      },
-      {
-        id: "cityline-suites",
-        name: "Cityline Suites",
-        city: "Toronto",
-        address: "12 Front Street",
-        rating: 4.71,
-        reviewCount: 318,
-        email: "cityline@email.com",
-        phone: "(123) 456-7802",
-        employees: [
-          { id: "E031122233", name: "Sophia Martin", role: "Receptionist" },
-        ],
-        rooms: [
-          { id: 401, roomNumber: 401, price: 219, roomType: "Single", view: "City View" },
-        ],
-      },
-    ],
-  },
-  {
-    id: "northstar-hospitality",
-    name: "Northstar Hospitality",
-    city: "Montreal",
-    address: "55 Rue Sainte-Catherine",
-    email: "northstar@email.com",
-    phone: "(514) 555-0123",
-    hotels: [
-      {
-        id: "northstar-central",
-        name: "Northstar Central",
-        city: "Montreal",
-        address: "55 Rue Sainte-Catherine",
-        rating: 4.83,
-        reviewCount: 412,
-        email: "central@email.com",
-        phone: "(514) 555-0148",
-        employees: [{ id: "E041122233", name: "Emma Roy", role: "Admin" }],
-        rooms: [{ id: 501, roomNumber: 501, price: 279, roomType: "Double", view: "City View" }],
-      },
-    ],
-  },
-  {
-    id: "summit-stays",
-    name: "Summit Stays",
-    city: "Vancouver",
-    address: "900 Granville Street",
-    email: "summit@email.com",
-    phone: "(604) 555-0188",
-    hotels: [
-      {
-        id: "summit-pacific",
-        name: "Summit Pacific",
-        city: "Vancouver",
-        address: "900 Granville Street",
-        rating: 4.77,
-        reviewCount: 280,
-        email: "pacific@email.com",
-        phone: "(604) 555-0110",
-        employees: [{ id: "E051122233", name: "Lucas Green", role: "Manager" }],
-        rooms: [{ id: 601, roomNumber: 601, price: 319, roomType: "Suite", view: "Ocean View" }],
-      },
-    ],
-  },
-  {
-    id: "golden-key-collection",
-    name: "Golden Key Collection",
-    city: "Ottawa",
-    address: "240 Wellington Street",
-    email: "goldenkey@email.com",
-    phone: "(613) 555-0161",
-    hotels: [
-      {
-        id: "golden-key-downtown",
-        name: "Golden Key Downtown",
-        city: "Ottawa",
-        address: "240 Wellington Street",
-        rating: 4.69,
-        reviewCount: 201,
-        email: "downtown@email.com",
-        phone: "(613) 555-0162",
-        employees: [{ id: "E061122233", name: "Ethan Clark", role: "Clerk" }],
-        rooms: [{ id: 701, roomNumber: 701, price: 239, roomType: "Double", view: "City View" }],
-      },
-    ],
-  },
-  {
-    id: "maple-luxe",
-    name: "Maple Luxe",
-    city: "Calgary",
-    address: "18 Stephen Avenue",
-    email: "mapleluxe@email.com",
-    phone: "(403) 555-0147",
-    hotels: [
-      {
-        id: "maple-luxe-west",
-        name: "Maple Luxe West",
-        city: "Calgary",
-        address: "18 Stephen Avenue",
-        rating: 4.73,
-        reviewCount: 156,
-        email: "west@email.com",
-        phone: "(403) 555-0148",
-        employees: [{ id: "E071122233", name: "Charlotte White", role: "Admin" }],
-        rooms: [{ id: 801, roomNumber: 801, price: 249, roomType: "Single", view: "Mountain View" }],
-      },
-    ],
-  },
-];
+import { useAuth, isUnauthorizedError } from "../context/auth_context";
+import {
+  getHotelChains,
+  getHotels,
+  getEmployees,
+  getRooms,
+} from "../lib/protected_api";
 
 const addLabels = {
   chains: "+ ADD HOTEL CHAIN",
@@ -182,29 +26,84 @@ const addLabels = {
 
 function AdminManageDatabasePage() {
   const [view, setView] = useState("chains");
-  const [selectedChainId, setSelectedChainId] = useState(adminData[0].id);
-  const [selectedHotelId, setSelectedHotelId] = useState(adminData[0].hotels[0].id);
+  const [selectedChainId, setSelectedChainId] = useState(null);
+  const [selectedHotelId, setSelectedHotelId] = useState(null);
   const [isAddEntityOpen, setIsAddEntityOpen] = useState(false);
   const [editEntityTarget, setEditEntityTarget] = useState(null);
   const [deleteEntityTarget, setDeleteEntityTarget] = useState(null);
 
+  const { token, logout, displayName } = useAuth();
+  const [adminData, setAdminData] = useState([])
+  const [loading, setLoading] = useState(true);
+
+  // fetch all data at once, small dataset so this is okay
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const hotelChains = await getHotelChains(token);
+
+        // get hotels per chain
+        const data = await Promise.all(
+          hotelChains.map(async (hotelChain) => {
+            const hotels = await getHotels(hotelChain.name, token);
+
+            // get rooms and employees for each hotel
+            const detailsForHotel = await Promise.all(
+              hotels.map(async (hotel) => {
+                const [employees, rooms] = await Promise.all([
+                  getEmployees(hotel.hid, token),
+                  getRooms(hotel.hid, token),
+                ]);
+
+                return {
+                  ...hotel,
+                  employees,
+                  rooms,
+                }
+              })
+            );
+
+            return {
+              ...hotelChain,
+              hotels: detailsForHotel,
+            }
+          })
+        );
+
+        setAdminData(data);
+        console.log(data); //tsetsttestsTESTSTE
+
+        // initialize selected stuff
+        setSelectedChainId(data[0].name);
+        setSelectedHotelId(data[0].hotels[0]?.hid ?? null);
+      } catch (error) {
+        console.error("failed to fetch data")
+      } finally {
+        setLoading(false);
+      };
+    };
+
+    fetchData();
+  }, [token]);
+
   const selectedChain = useMemo(
-    () => adminData.find((chain) => chain.id === selectedChainId) ?? adminData[0],
-    [selectedChainId]
+    () => adminData.find((chain) => chain.name === selectedChainId) ?? adminData[0] ?? null,
+    [selectedChainId, adminData]
   );
 
   const selectedHotel = useMemo(
-    () => selectedChain.hotels.find((hotel) => hotel.id === selectedHotelId) ?? selectedChain.hotels[0],
+    () => selectedChain?.hotels.find((hotel) => hotel.hid === selectedHotelId) ?? selectedChain?.hotels[0] ?? null,
     [selectedChain, selectedHotelId]
-  );
+  )
 
-  const openHotels = (chainId) => {
-    const chain = adminData.find((item) => item.id === chainId);
+  const openHotels = (chainName) => {
+    const chain = adminData.find((item) => item.name === chainName);
     if (!chain) {
       return;
     }
-    setSelectedChainId(chain.id);
-    setSelectedHotelId(chain.hotels[0]?.id ?? "");
+    setSelectedChainId(chain.name);
+    setSelectedHotelId(chain.hotels[0]?.hid ?? "");
     setView("hotels");
   };
 
@@ -236,11 +135,21 @@ function AdminManageDatabasePage() {
     rooms: "Manage Rooms",
   }[view];
 
+  const ROOM_TYPE_MAP = {
+    1: "Single",
+    2: "Double",
+    4: "Suite",
+  };
+
+  if (loading) {
+    return <div>loading data...</div>
+  }
+
   const totalCount = {
     chains: adminData.length,
-    hotels: selectedChain.hotels.length,
-    employees: selectedHotel.employees.length,
-    rooms: selectedHotel.rooms.length,
+    hotels: selectedChain?.hotels.length ?? 0,
+    employees: selectedHotel?.employees.length ?? 0,
+    rooms: selectedHotel?.rooms.length ?? 0,
   }[view];
 
   const countLabel = {
@@ -283,8 +192,13 @@ function AdminManageDatabasePage() {
   return (
     <div className="min-h-screen">
       <div className="min-h-screen bg-[#f4f7fb] shadow-[0_25px_60px_rgba(0,0,0,0.28)]">
-        <Navbar user_type="Admin" user_name="Eric Chhour" currency="CAD" setCurrency={() => {}} />
-
+        <Navbar
+          user_type="Admin"
+          user_name={displayName}
+          currency="CAD"
+          setCurrency={() => {}}
+          onSignOut={logout}
+        />
         <main className="px-4 pb-12 pt-28 sm:px-6 lg:px-10">
           <div className="mx-auto flex w-full max-w-5xl flex-col gap-8">
             {view !== "chains" ? (
@@ -337,13 +251,12 @@ function AdminManageDatabasePage() {
                 {view === "chains"
                   ? adminData.map((chain) => (
                       <HotelChainCard
-                        key={chain.id}
+                        key={chain.name}
                         name={chain.name}
-                        city={chain.city}
                         address={chain.address}
                         hotels_count={chain.hotels.length}
-                        email={chain.email}
-                        phone={chain.phone}
+                        email={chain.email_addresses?.[0]}
+                        phone={chain.phone_number}
                         onEdit={() =>
                           openEditEntity({
                             entity: "HotelChain",
@@ -351,12 +264,12 @@ function AdminManageDatabasePage() {
                             initialValues: {
                               name: chain.name,
                               address: chain.address,
-                              email: chain.email,
-                              phone: chain.phone,
+                              email: chain.email_addresses?.[0],
+                              phone: chain.phone_number,
                             },
                           })
                         }
-                        onViewHotels={() => openHotels(chain.id)}
+                        onViewHotels={() => openHotels(chain.name)}
                         onDelete={() =>
                           openDeleteEntity({
                             entity: "HotelChain",
@@ -375,25 +288,25 @@ function AdminManageDatabasePage() {
                         name={hotel.name}
                         rating={hotel.rating}
                         review_count={hotel.reviewCount}
-                        city={hotel.city}
-                        address={hotel.address}
+                        city={hotel.address.city}
+                        address={`${hotel.address.street_address}`}
                         rooms_count={hotel.rooms.length}
-                        email={hotel.email}
-                        phone={hotel.phone}
+                        email={hotel.email_addresses?.[0]}
+                        phone={hotel.phone_number}
                         onEdit={() =>
                           openEditEntity({
                             entity: "Hotel",
                             entityName: hotel.name,
                             initialValues: {
                               name: hotel.name,
-                              address: hotel.address,
-                              email: hotel.email,
-                              phone: hotel.phone,
+                              address: hotel.address.street_address,
+                              email: hotel.email_addresses?.[0],
+                              phone: hotel.phone_number,
                             },
                           })
                         }
-                        onViewEmployees={() => openEmployees(hotel.id)}
-                        onViewRooms={() => openRooms(hotel.id)}
+                        onViewEmployees={() => openEmployees(hotel.hid)}
+                        onViewRooms={() => openRooms(hotel.hid)}
                         onDelete={() =>
                           openDeleteEntity({
                             entity: "Hotel",
@@ -408,17 +321,17 @@ function AdminManageDatabasePage() {
                   ? selectedHotel.employees.map((employee) => (
                       <EmployeeCard
                         key={employee.id}
-                        name={employee.name}
+                        name={`${employee.first_name} ${employee.last_name}`}
                         role={employee.role}
                         employee_id={employee.id}
                         onEdit={() =>
                           openEditEntity({
                             entity: "Employee",
-                            entityName: employee.name,
+                            entityName: employee.first_name,
                             initialValues: {
-                              firstName: employee.name.split(" ")[0] ?? "",
-                              lastName: employee.name.split(" ").slice(1).join(" "),
-                              address: selectedHotel.address,
+                              firstName: employee.first_name,
+                              lastName: employee.last_name,
+                              address: selectedHotel.address.street_address,
                               password: "password123!",
                               role: employee.role === "Admin" ? "Admin" : "Employee",
                             },
@@ -437,22 +350,22 @@ function AdminManageDatabasePage() {
                 {view === "rooms"
                   ? selectedHotel.rooms.map((room) => (
                       <RoomCard
-                        key={room.id}
+                        key={room.room_number}
                         variant="admin"
-                        room_number={room.roomNumber}
+                        room_number={room.room_number}
                         price={room.price}
-                        room_type={room.roomType}
+                        room_type={room.capacity}
                         view={room.view}
                         onEdit={() =>
                           openEditEntity({
                             entity: "Room",
-                            entityName: `Room ${room.roomNumber}`,
+                            entityName: `Room ${room.room_number}`,
                             initialValues: {
-                              roomNumber: `${room.roomNumber}`,
-                              capacity: room.roomType,
+                              roomNumber: `${room.room_number}`,
+                              capacity: ROOM_TYPE_MAP[room.capacity] ?? "Single",
                               view: room.view.replace(" View", ""),
                               amenities: room.amenities?.join(", ") ?? "",
-                              problems: room.problems ?? "",
+                              problems: room.problem ?? "",
                               price: `${room.price}`,
                               extendable: false,
                             },
