@@ -20,7 +20,6 @@ const buttonClass =
 
 const HotelChainCard = ({
   name,
-  city,
   address,
   hotels_count,
   email,
@@ -47,7 +46,7 @@ const HotelChainCard = ({
             <div className="mt-1 flex items-center gap-1.5 text-sm text-slate-500">
               <LocationOnOutlinedIcon className="text-[18px]" />
               <span>
-                {city} - {address}
+                {address}
               </span>
             </div>
           </div>

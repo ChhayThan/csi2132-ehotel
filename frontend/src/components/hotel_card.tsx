@@ -66,8 +66,7 @@ const HotelCard = (props: HotelCardProps) => {
                     <StarIcon key={index} className="text-[16px] text-black" />
                   ))}
                 </div>
-                <span>{props.rating.toFixed(2)}</span>
-                <span>({props.review_count} reviews)</span>
+                <span>{props.rating}</span>
               </div>
               <div className="mt-1 flex items-center gap-1.5 text-sm text-slate-500">
                 <LocationOnOutlinedIcon className="text-[18px]" />

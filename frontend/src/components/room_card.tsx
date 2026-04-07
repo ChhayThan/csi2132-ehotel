@@ -52,7 +52,7 @@ const RoomCard = (props: RoomCardProps) => {
             <p className="mt-1 text-lg font-medium text-slate-500">${props.price} per night</p>
             {props.room_type || props.view || props.amenities?.length ? (
               <p className="mt-2 text-sm text-slate-500">
-                {[props.room_type, props.view, props.amenities?.slice(0, 3).join(", ")].filter(Boolean).join(" • ")}
+                {[`${props.room_type} guest${props.room_type === "1" ? '' : 's'}`, props.view, props.amenities?.slice(0, 3).join(", ")].filter(Boolean).join(" • ")}
               </p>
             ) : null}
             {props.problems ? <p className="mt-1 text-sm text-red-600">{props.problems}</p> : null}
