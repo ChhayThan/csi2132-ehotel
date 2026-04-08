@@ -1,3 +1,4 @@
+import math
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -204,6 +205,9 @@ def get_hotels_in_chain(chain_name: str) -> list[Hotel]:
         )
         row["email_addresses"] = parse_pg_array(row.get("email_addresses"))
 
+        if math.isnan(row['manager_eid']):
+            row['manager_eid'] = None
+
     return [Hotel(**row) for row in res]
 
 
@@ -278,6 +282,9 @@ def edit_hotel_in_chain(hotel_id: int, new_hotel: HotelPartial) -> int:
         country=res.pop("address_country")
     )
 
+    if math.isnan(res['manager_eid']):
+        res['manager_eid'] = None
+
     old_hotel = Hotel(**res)
 
     # bundle updates as a single transaction
@@ -343,6 +350,9 @@ def delete_hotel_in_chain(hotel_id: int) -> Hotel:
         street_address=res.pop("address_street_address"),
         country=res.pop("address_country")
     )
+
+    if math.isnan(res['manager_eid']):
+        res['manager_eid'] = None
 
     old_hotel = Hotel(**res)
 

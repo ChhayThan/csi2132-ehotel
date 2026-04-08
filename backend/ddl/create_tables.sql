@@ -31,8 +31,8 @@ CREATE TABLE IF NOT EXISTS hotel (
     phone_number PHONE_NUMBER NOT NULL,
     image TEXT,
     chain_name VARCHAR(255) NOT NULL,
-    manager_eid INTEGER NOT NULL,
-    FOREIGN KEY (manager_eid) REFERENCES employee(id) ON DELETE RESTRICT,
+    manager_eid INTEGER UNIQUE,
+    FOREIGN KEY (manager_eid) REFERENCES employee(id) ON DELETE SET NULL,
     FOREIGN KEY (chain_name) REFERENCES hotel_chain(name) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
