@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS room_amenity (
     room_number POSITIVE_INTEGER,
     amenity AMENITY,
     PRIMARY KEY (hid, room_number, amenity),
-    FOREIGN KEY (hid, room_number) REFERENCES room(hid, room_number) ON DELETE CASCADE
+    FOREIGN KEY (hid, room_number) REFERENCES room(hid, room_number) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS customer (
@@ -87,7 +87,7 @@ CREATE TABLE IF NOT EXISTS booking (
     checkin_date DATE NOT NULL CHECK (checkin_date > creation_date),
     checkout_date DATE NOT NULL CHECK (checkout_date > checkin_date),
     FOREIGN KEY (hid, room_number) REFERENCES room(hid, room_number) ON DELETE RESTRICT,
-    FOREIGN KEY (customer_id) REFERENCES customer(id) ON DELETE CASCADE
+    FOREIGN KEY (customer_id) REFERENCES customer(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS renting (
@@ -104,7 +104,7 @@ CREATE TABLE IF NOT EXISTS renting (
     booking_id INTEGER,
     booking_creation_date DATE,
     FOREIGN KEY (hid, room_number) REFERENCES room(hid, room_number) ON DELETE RESTRICT,
-    FOREIGN KEY (customer_id) REFERENCES customer(id) ON DELETE CASCADE,
+    FOREIGN KEY (customer_id) REFERENCES customer(id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (employee_id) REFERENCES employee(id) ON DELETE RESTRICT
 );
 
